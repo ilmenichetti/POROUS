@@ -1,11 +1,14 @@
 Package: Porous
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Dual porosity SOC decomposition model (draft)
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Lorenzo Menichetti
+Maintainer: Lorenzo Menichetti <Lorenzo.Menichetti@slu.se>
+Description: This package contains a draft version of the dual porosity SOC decomposition model developed by Meurer and Jarvis. The model is being actively developed.
+    Original description in: Meurer, Katharina Hildegard Elisabeth, Claire Chenu, Elsa Coucheney, Anke Marianne Herrmann, Thomas Keller, Thomas Kätterer, David Nimblad Svensson, and Nicholas Jarvis. “Modelling Dynamic Interactions between Soil Structure and the Storage and Turnover of Soil Organic Matter.” Biogeosciences 17, no. 20 (October 19, 2020): 5025–42. https://doi.org/10.5194/bg-17-5025-2020.
+Imports:
+  SoilR
+License: CC BY 4.0
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.2.3
