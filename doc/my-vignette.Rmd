@@ -1,0 +1,80 @@
+---
+title: "Porous use case"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{my-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Intro
+This poorly written vignette contains one working example of how to run the model in its current state
+
+## Example: how to to run the model.
+
+```{r setup}
+library(Porous)
+library(SoilR) #this should load automatically anyway since it is required by Porous
+```
+
+First we create the model object:
+```{r}
+ modelObject<-Porous()
+```
+This creates a model with the default parameters. The parameter values can also be specified by the user (when one value is not specified the parameter will have default value), such as:
+
+```{r}
+modelObject<-Porous(ky=0.8, ko=0.00605,
+                    kmix=0.9,
+                    e=0.13,
+                    Im=1.1, Ir=0.5,
+                    F_prot=0.0,
+                    phi_mac=0.2,
+                    clay=0.2,
+                    Delta_z_min=20,
+                    gamma_o=1.2)
+
+```
+
+
+`SoilR` has an internal function designed to plot any model (but fluxes do not always seem consistent in the representation):
+```{r}
+plotPoolGraph(modelObject)
+```
+
+Now we can run the model, for wich we need to initialize the starting values
+```{r}
+init<-c(My_mes=1, Mo_mes=10,My_mic=0.6, Mo_mic=3)
+times<-seq(0,20,by=0.1)
+```
+
+We can then run the model with the specific `SoilR` function:
+```{r}
+modrun0<-Model_by_PoolNames(smod=modelObject, times=times, initialValues=init)
+```
+
+And, again relying on  the specific `SoilR` function, we can extract the C stocks and respiration fluxes:
+
+```{r}
+Stocks<-getC(modrun0)
+Resp<-getReleaseFlux(modrun0)
+```
+Let's see what object we created (by plotting just the first rows of it):
+```{r}
+head(Resp)
+```
+
+Everything seems in order and we can proceed to plot:
+```{r fig1, fig.height = 8, fig.width = 6}
+par(mfrow=c(2,1), mar=c(4,4,0,1))
+matplot(times, Stocks, type="l", lty=1, col=1:4, xlab=" ", ylab="Pool contents", bty="n")
+legend("bottomright", c("My_mes", "Mo_mes", "My_mic", "Mo_mic"), lty=1, col=1:4, bty="n")
+matplot(times, Resp,  type="l", lty=1, col=1:2, xlab="Time", ylab="Respiration", bty="n")
+```
