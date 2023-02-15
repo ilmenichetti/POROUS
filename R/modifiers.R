@@ -23,7 +23,7 @@ pore_frac<-function(phi_mac=0.2,
 
     phi_mic_calc<-phi_mic(My_mic=1, Mo_mic=2, My_mes=1, Mo_mes=10, gamma_o=gamma_o, clay=clay, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
 
-    phi_mat_calc<-phi_mat(phi_mic=phi_mic_calc, My_mic=1, Mo_mic=2, My_mes=1, Mo_mes=10, gamma_o=gamma_o, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
+    phi_mat_calc<-phi_mat(My_mic=1, Mo_mic=2, My_mes=1, Mo_mes=10, gamma_o=gamma_o, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
 
     phi_mes_calc=phi_mat_calc-phi_mic_calc
 
@@ -121,7 +121,7 @@ phi_mat<-function(My_mic, Mo_mic, My_mes, Mo_mes,
                   f_agg=3,
                   Delta_z_min,#soil layer thickess (m)
                   phi_min=1,
-                  phi_mac#minimum matrix porosity, STILL MISSING
+                  phi_mac
                   ){
 
   Mso=My_mic + Mo_mic + My_mes + Mo_mes
