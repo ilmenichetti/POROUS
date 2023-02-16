@@ -21,9 +21,9 @@ pore_frac<-function(phi_mac=0.2,
                     My_mes,
                     Mo_mes){
 
-    phi_mic_calc<-phi_mic(My_mic=1, Mo_mic=2, My_mes=1, Mo_mes=10, gamma_o=gamma_o, clay=clay, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
+    phi_mic_calc<-phi_mic(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, clay=clay, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
 
-    phi_mat_calc<-phi_mat(My_mic=1, Mo_mic=2, My_mes=1, Mo_mes=10, gamma_o=gamma_o, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
+    phi_mat_calc<-phi_mat(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
 
     phi_mes_calc=phi_mat_calc-phi_mic_calc
 
