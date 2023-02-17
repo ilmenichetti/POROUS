@@ -55,7 +55,7 @@ f_text_mic<-function(clay, phi_min){
 #' Variation of the thickness of soil layer
 #'
 #' This function calculates the variation of the thickness of soil layer as a function of organic matter
-#' @param f_agg an aggregation factor (m3 pore space m−3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}
+#' @param f_agg an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}
 #' @param Delta_z_min minimal soil thickness if no organic matter was present
 #' @inheritParams pore_frac
 #' @param gamma_o density of organic matter

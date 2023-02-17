@@ -16,7 +16,7 @@ Delta_z(
 )
 }
 \arguments{
-\item{f_agg}{an aggregation factor (m3 pore space m−3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}}
+\item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}}
 
 \item{Delta_z_min}{minimal soil thickness if no organic matter was present}
 

@@ -15,7 +15,8 @@ Porous(
   phi_mac = 0.2,
   clay = 0.2,
   Delta_z_min = 20,
-  gamma_o = 1.2
+  gamma_o = 1.2,
+  proportion = NULL
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ Porous(
 \item{Delta_z_min}{minimal soil thickness if no organic matter was present}
 
 \item{gamma_o}{density of organic matter}
+
+\item{proportion}{this is the linearization term. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)}
 }
 \value{
 two values, the proportion of input in the mesopore and micropore Y pools

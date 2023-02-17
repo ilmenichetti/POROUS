@@ -27,6 +27,7 @@
 #' @param Im Inputs from aboveground
 #' @param Ir Inputs from roots
 #' @param F_prot protection provided by the micropore space
+#' @param proportion this is the linearization term. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
 #' @inheritParams f_text_mic
@@ -44,7 +45,8 @@ Porous<-function(ky=0.8, ko=0.00605,
                  phi_mac=0.2,
                  clay=0.2,
                  Delta_z_min=20,
-                 gamma_o=1.2){
+                 gamma_o=1.2,
+                 proportion=NULL){
 
   time_symbol='t'
 
@@ -59,18 +61,38 @@ Porous<-function(ky=0.8, ko=0.00605,
           Im
         }
       ),
+
+    if(is.null(proportion)){ #if cycle for inputs going to My_mes, if linear or not. If "proportion" is missing then nonlinear
       SoilR:::InFlux_by_PoolName(
         destinationName='My_mes',
-        func=function(t){
-          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o)[1]
-        }
-      ),
-      SoilR:::InFlux_by_PoolName(
-        destinationName='My_mic',
-        func=function(t){
-          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o)[2]
+        func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
+          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic)[1]
         }
       )
+    } else{ #... else use the proportion
+      SoilR:::InFlux_by_PoolName(
+        destinationName='My_mes',
+        func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
+          Ir*proportion
+        }
+      )
+    }
+        ,
+    if(is.null(proportion)){#if cycle for inputs going to My_ic, if linear or not. If "proportion" is missing then nonlinear
+      SoilR:::InFlux_by_PoolName(
+        destinationName='My_mic',
+        func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
+          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic)[2]
+        }
+      )
+    } else {#... else use the reciprocal of the proportion
+      SoilR:::InFlux_by_PoolName(
+        destinationName='My_mic',
+        func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
+          Ir*(1-proportion)
+        }
+      )
+    }
     )
   )
   ##### OUT
