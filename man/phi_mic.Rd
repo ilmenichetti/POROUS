@@ -13,8 +13,9 @@ phi_mic(
   f_agg = 3,
   clay,
   Delta_z_min,
-  phi_min = 1,
-  phi_mac
+  phi_min,
+  phi_mac,
+  f_text_mic
 )
 }
 \arguments{

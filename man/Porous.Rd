@@ -16,7 +16,9 @@ Porous(
   clay = 0.2,
   Delta_z_min = 20,
   gamma_o = 1.2,
-  proportion = NULL
+  proportion = NULL,
+  phi_min = 1,
+  f_text_mic = NULL
 )
 }
 \arguments{
@@ -43,6 +45,8 @@ Porous(
 \item{gamma_o}{density of organic matter}
 
 \item{proportion}{this is the linearization term. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)}
+
+\item{phi_min}{minimal porosity, user defined}
 }
 \value{
 two values, the proportion of input in the mesopore and micropore Y pools

@@ -5,14 +5,16 @@
 \title{The main accessory function of the model}
 \usage{
 pore_frac(
-  phi_mac = 0.2,
-  clay = 0.2,
-  Delta_z_min = 20,
-  gamma_o = 1.2,
+  phi_mac,
+  clay,
+  Delta_z_min,
+  gamma_o,
   My_mic,
   Mo_mic,
   My_mes,
-  Mo_mes
+  Mo_mes,
+  phi_min,
+  f_text_mic = NULL
 )
 }
 \arguments{

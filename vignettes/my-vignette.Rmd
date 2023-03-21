@@ -2,7 +2,7 @@
 title: "Porous use case"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{Porous use case}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,7 +15,34 @@ knitr::opts_chunk$set(
 ```
 
 ## Intro
-This poorly written vignette contains one working example of how to run the model in its current state
+This poorly written vignette contains one working example of how to run the model in its current state.  
+The code is organized in a series of functions.
+
+
+```{r,echo=FALSE, fig.height = 3, fig.width = 7}
+library(DiagrammeR)
+DiagrammeR::grViz("digraph {
+
+graph [layout = dot, rankdir = LR]
+# define the global styles of the nodes. We can override these in box if we wish
+node [shape = rectangle, style = filled, fillcolor = Linen]
+
+Delta_z [label =  'Delta_z function', fillcolor = cornflowerblue]
+phi_mat [label = 'phi_mat function', fillcolor = darkseagreen3]
+phi_mic [label = 'phi_mic function', fillcolor = bisque2]
+f_text_mic_func [label = 'f_text_mic_func function', fillcolor = mediumpurple1]
+Porous [label = 'Porous function', fillcolor = darkorange]
+pore_frac [label= 'pore_frac function', fillcolor = goldenrod2]
+
+# edge definitions with the node IDs
+Delta_z -> phi_mat -> pore_frac
+Delta_z -> phi_mic -> pore_frac
+f_text_mic_func -> phi_mic
+pore_frac -> Porous
+}")
+```
+
+
 
 ## Example: how to to run the model.
 
@@ -37,15 +64,17 @@ modelObject<-Porous(ky=0.8, ko=0.00605,
                     Im=1.1, Ir=0.5,
                     F_prot=0.0,
                     phi_mac=0.2,
+                    phi_min=1,
                     clay=0.2,
                     Delta_z_min=20,
                     gamma_o=1.2)
 
 ```
-
+Many values can be omitted, and the function will use the defaults. In particular `f_text_mic `, if omitted, will be calculated internally with a specific function, `f_text_mic_func()`.
 
 `SoilR` has an internal function designed to plot any model (but fluxes do not always seem consistent in the representation):
-```{r}
+
+```{r, fig.height = 7, fig.width = 7}
 plotPoolGraph(modelObject)
 ```
 

@@ -12,18 +12,20 @@
 #' @return two values, the proportion of input in the mesopore and micropore Y pools
 #' @export
 
-pore_frac<-function(phi_mac=0.2,
-                    clay=0.2,
-                    Delta_z_min=20,
-                    gamma_o=1.2,
+pore_frac<-function(phi_mac,
+                    clay,
+                    Delta_z_min,
+                    gamma_o,
                     My_mic,
                     Mo_mic,
                     My_mes,
-                    Mo_mes){
+                    Mo_mes,
+                    phi_min,
+                    f_text_mic=NULL){
 
-    phi_mic_calc<-phi_mic(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, clay=clay, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
+    phi_mic_calc<-phi_mic(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, clay=clay, Delta_z_min = Delta_z_min, phi_mac=phi_mac, phi_min = phi_min, f_text_mic = f_text_mic)
 
-    phi_mat_calc<-phi_mat(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, Delta_z_min = Delta_z_min, phi_mac=phi_mac)
+    phi_mat_calc<-phi_mat(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, Delta_z_min = Delta_z_min, phi_mac=phi_mac, phi_min = phi_min)
 
     phi_mes_calc=phi_mat_calc-phi_mic_calc
 
@@ -41,7 +43,7 @@ pore_frac<-function(phi_mac=0.2,
 #' @return one single value
 #' @export
 
-f_text_mic<-function(clay, phi_min){
+f_text_mic_func<-function(clay, phi_min){
 
   psi_w=-150 #meters, the wilting point pressure head
   theta_w=0.004+0.5*clay #psi_w (m) is the wilting point pressure head (= -150 m) and the corresponding water content theta_w (m3 m-3) is estimated from a pedotransfer function (Ostovari et al., 2015)
@@ -81,7 +83,8 @@ Delta_z<-function(f_agg=3,
 #' This function calculates the microporosity \eqn{\phi_{mic}} based on the variation of organic matter in the soil. It is used in \code{\link{pore_frac}}
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
-#' @inheritParams f_text_mic
+#' @inheritParams f_text_mic_func
+#' @f_text_mic in case the user wants to override the calculation of f_text_mic, a value can be specified here. Otherwise the value is calculated with the function \code{\link{f_text_mic_func}}
 #' @return one single value
 #' @export
 
@@ -90,10 +93,15 @@ phi_mic<-function(My_mic, Mo_mic, My_mes, Mo_mes,
                   f_agg=3, #default suggested by Nick Jarvis
                   clay,
                   Delta_z_min, #soil layer thickess (m)
-                  phi_min=1, #minimum matrix porosity, STILL MISSING
-                  phi_mac){
+                  phi_min, #minimum matrix porosity, STILL MISSING
+                  phi_mac,
+                  f_text_mic){
+  if(is.null(f_text_mic)){
+    f_text_mic_calc=f_text_mic_func(clay=clay, phi_min=phi_min)
+  } else {
+    f_text_mic_calc=f_text_mic
+  }
 
-  f_text_mic_calc=f_text_mic(clay=clay, phi_min=phi_min)
 
   Delta_z_calc=Delta_z(f_agg=3,
                        Delta_z_min=Delta_z_min,
@@ -113,14 +121,13 @@ phi_mic<-function(My_mic, Mo_mic, My_mes, Mo_mes,
 #' This function calculates the matrix porosity \eqn{\phi_{mac}} based on the variation of organic matter in the soil. It is used in \code{\link{pore_frac}} to calculate mesoporosity \eqn{\phi_{mes}=\phi_{mat}-\phi_{mic}}
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
-#' @inheritParams f_text_mic
 #' @return one single value
 #' @export
 phi_mat<-function(My_mic, Mo_mic, My_mes, Mo_mes,
                   gamma_o,
                   f_agg=3,
                   Delta_z_min,#soil layer thickess (m)
-                  phi_min=1,
+                  phi_min,
                   phi_mac
                   ){
 

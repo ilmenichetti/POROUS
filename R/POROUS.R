@@ -30,7 +30,8 @@
 #' @param proportion this is the linearization term. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
-#' @inheritParams f_text_mic
+#' @inheritParams f_text_mic_func
+#' @f_text_mic if this value is specified, the function \code{\link{f_text_mic_func}} is overridden
 #' @return two values, the proportion of input in the mesopore and micropore Y pools
 #'
 #' @references Meurer, Katharina Hildegard Elisabeth, Claire Chenu, Elsa Coucheney, Anke Marianne Herrmann, Thomas Keller, Thomas Kätterer, David Nimblad Svensson, and Nicholas Jarvis. “Modelling Dynamic Interactions between Soil Structure and the Storage and Turnover of Soil Organic Matter.” Biogeosciences 17, no. 20 (October 19, 2020): 5025–42. https://doi.org/10.5194/bg-17-5025-2020. \cr
@@ -46,7 +47,9 @@ Porous<-function(ky=0.8, ko=0.00605,
                  clay=0.2,
                  Delta_z_min=20,
                  gamma_o=1.2,
-                 proportion=NULL){
+                 proportion=NULL,
+                 phi_min=1,
+                 f_text_mic=NULL){
 
   time_symbol='t'
 
@@ -66,7 +69,7 @@ Porous<-function(ky=0.8, ko=0.00605,
       SoilR:::InFlux_by_PoolName(
         destinationName='My_mes',
         func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
-          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic)[1]
+          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic)[1]
         }
       )
     } else{ #... else use the proportion
@@ -82,7 +85,7 @@ Porous<-function(ky=0.8, ko=0.00605,
       SoilR:::InFlux_by_PoolName(
         destinationName='My_mic',
         func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
-          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic)[2]
+          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic)[2]
         }
       )
     } else {#... else use the reciprocal of the proportion
