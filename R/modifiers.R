@@ -46,10 +46,13 @@ pore_frac<-function(phi_mac,
 f_text_mic_func<-function(clay, phi_min){
 
   psi_w=-150 #meters, the wilting point pressure head
+
   theta_w=0.004+0.5*clay #psi_w (m) is the wilting point pressure head (= -150 m) and the corresponding water content theta_w (m3 m-3) is estimated from a pedotransfer function (Ostovari et al., 2015)
-  lamda_mat=log(theta_w/phi_min)/log(-0.3/psi_w)
+
+  lamda_mat=log(theta_w/phi_min)/log(-0.3/psi_w) #lambda_mat is the pore size distribution index
 
   f_text_mic=(-0.3/-6)^lamda_mat
+
   return(f_text_mic)
 }
 

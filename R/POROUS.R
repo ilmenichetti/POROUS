@@ -28,6 +28,7 @@
 #' @param Ir Inputs from roots
 #' @param F_prot protection provided by the micropore space
 #' @param proportion this is the linearization term. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)
+#' @param phi_min minimum matrix porosity, user defined
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
 #' @inheritParams f_text_mic_func
@@ -48,7 +49,7 @@ Porous<-function(ky=0.8, ko=0.00605,
                  Delta_z_min=20,
                  gamma_o=1.2,
                  proportion=NULL,
-                 phi_min=1,
+                 phi_min=0.35,
                  f_text_mic=NULL){
 
   time_symbol='t'
