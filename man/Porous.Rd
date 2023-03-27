@@ -6,18 +6,18 @@
 \usage{
 Porous(
   ky = 0.8,
-  ko = 0.00605,
-  kmix = 0.9,
-  e = 0.13,
+  ko = 0.035,
+  kmix = 0.05,
+  e = 0.143,
   Im = 1.1,
   Ir = 0.5,
-  F_prot = 0,
-  phi_mac = 0.2,
+  F_prot = 0.1,
+  phi_mac = 0.152,
   clay = 0.2,
-  Delta_z_min = 20,
+  Delta_z_min = 4,
   gamma_o = 1.2,
   proportion = NULL,
-  phi_min = 1,
+  phi_min = 0.35,
   f_text_mic = NULL
 )
 }
@@ -32,7 +32,7 @@ Porous(
 
 \item{Im}{Inputs from aboveground}
 
-\item{Ir}{Inputs from roots}
+\item{Ir}{Inputs from roots, which is partitioned between micropore and mesopores with the function \code{\link{pore_frac}}}
 
 \item{F_prot}{protection provided by the micropore space}
 
@@ -44,16 +44,16 @@ Porous(
 
 \item{gamma_o}{density of organic matter}
 
-\item{proportion}{this is the linearization term. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)}
+\item{proportion}{this is a linearization term to make the proportion of the inputs between micro- and mesopores constant. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)}
 
-\item{phi_min}{minimal porosity, user defined}
+\item{phi_min}{minimum matrix porosity, user defined}
 }
 \value{
 two values, the proportion of input in the mesopore and micropore Y pools
 }
 \description{
 This function implements with the SoilR model development framework the dual porosity model described in Meurer et al. (2020).
-The model is an evolution of a two-pool linear SOC model, with two pools (young and old material9) running in parallel for micro and mesopores.
+The model is an evolution of a two-pool linear SOC model, with two pools (young and old material) running in parallel for micro- and mesopores.
 While aboveground inputs are rooted in the mesopores, root inputs are distributed between micro and mesopores depending on porosity, which is in turn influenced by organic matter. This makes the model nonlinear, although it still behaves similarly to a linear model within a reasonable calibration range. The model is described by a series of four equations: \cr
 \cr
 \eqn{\frac{dM_{Y_{(mes)}}}{dt} = I_m + \left( \frac{\phi_{mes}}{\phi_{mes}+\phi_{mic}}\right) \cdot I_r - k_Y \cdot M_{Y_{(mes)}}+ T_Y } \cr
@@ -70,7 +70,8 @@ The model can be rewritten in matrix form as :  \cr
 \eqn{I_m(t) + I_r(t) \cdot N(C,t) + A(t) \cdot P(t) \cdot C(t)} \cr
 Or, more explicitly:  \cr
  \cr
- \eqn{\frac{dC}{dt}=\begin{bmatrix} I_m\\ 0\\ 0\\ 0\\ \end{bmatrix}+   \begin{bmatrix} I_r\\ 0\\ I_r\\ 0\\ \end{bmatrix} \cdot \begin{bmatrix} \varphi_{mes} & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & \varphi_{mic} & 0\\ 0 & 0 & 0 & 1\\ \end{bmatrix}+   \begin{bmatrix} -k_y & \epsilon & 0 & 0\\ 0 & -k_o & 0 & 0\\ T_Y & 0 & -k_y & \epsilon\\ 0 & T_O & 0 & -k_o\\ \end{bmatrix} \cdot \begin{bmatrix} 1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & F_{prot} & 0\\ 0 & 0 & 0 & F_{prot}\\ \end{bmatrix} \cdot \begin{bmatrix} M_{Y_{mes}}\\ M_{O_{mes}}\\ M_{Y_{mic}}\\ M_{O_{mic}} \end{bmatrix} }
+ \eqn{\frac{dC}{dt}=\begin{bmatrix} I_m\\ 0\\ 0\\ 0\\ \end{bmatrix}+   \begin{bmatrix} I_r\\ 0\\ I_r\\ 0\\ \end{bmatrix} \cdot \begin{bmatrix} \varphi_{mes} & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & \varphi_{mic} & 0\\ 0 & 0 & 0 & 1\\ \end{bmatrix}+   \begin{bmatrix} -k_y & \epsilon & 0 & 0\\ 0 & -k_o & 0 & 0\\ T_Y & 0 & -k_y & \epsilon\\ 0 & T_O & 0 & -k_o\\ \end{bmatrix} \cdot \begin{bmatrix} 1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & F_{prot} & 0\\ 0 & 0 & 0 & F_{prot}\\ \end{bmatrix} \cdot \begin{bmatrix} M_{Y_{mes}}\\ M_{O_{mes}}\\ M_{Y_{mic}}\\ M_{O_{mic}} \end{bmatrix} } \cr
+The model is implemented with the \code{SoilR} package, but it is relying on a more conventional ODE definition (not its matrix form).
 }
 \references{
 Meurer, Katharina Hildegard Elisabeth, Claire Chenu, Elsa Coucheney, Anke Marianne Herrmann, Thomas Keller, Thomas Kätterer, David Nimblad Svensson, and Nicholas Jarvis. “Modelling Dynamic Interactions between Soil Structure and the Storage and Turnover of Soil Organic Matter.” Biogeosciences 17, no. 20 (October 19, 2020): 5025–42. https://doi.org/10.5194/bg-17-5025-2020. \cr

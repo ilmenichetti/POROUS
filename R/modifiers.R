@@ -37,7 +37,15 @@ pore_frac<-function(phi_mac,
 
 #' Proportion of micropores
 #'
-#' This function calculates the proportion of the textural pore space that comprises micropores. It is used in \code{\link{pore_frac}}
+#' This function calculates the proportion of the textural pore space that comprises micropores. It is used in \code{\link{pore_frac}}.
+#' This parameter was intended in the original paper (Meurer et al., 2020) as user defined, but its estimation has been developed further by N. Jarvis (personal communication).
+#' The method for its estimation is based on a Brooks-Corey soil water retention model: \deqn{ f_{mic_{text}} = \left( \frac{\psi_{mes  \textbackslash mac}}{\psi_{mic  \textbackslash mes}} \right) ^{\lambda_{mat(t)}}}
+#' where \eqn{\psi_{mes  \textbackslash mac}} is the pressure head defining the largest mesopore (set to -0.3) and \eqn{\psi_{mic  \textbackslash mes}} is the pressure head defining the largest micropore (set to -0.6). The parameter
+#' \eqn{\lambda_{mat(t)}} is in turn estimated as:
+#' \deqn{\lambda_{mat(t)}= \frac{log\left(\frac{\theta_w}{\phi_{min}}\right)}  {log\left(\frac{\psi_{mes  \textbackslash mac}}{\psi_{w}}\right)}}
+#' where \eqn{psi_w} is the wilting oint pressure head (set to -150 m) and \eqn{\theta_w} is estimated from a pedotransfer function:
+#' \deqn{\theta_w=0.004+0.5 \cdot f_{clay}}
+#' where \eqn{f_{clay}} is the soil clay content (\ifelse{html}{\out{kg kg<sup>-1</sup>}}{\eqn{kg \: kg^{-1}}}   ).
 #' @param clay soil clay fraction
 #' @param phi_min minimal porosity, user defined
 #' @return one single value
@@ -59,7 +67,7 @@ f_text_mic_func<-function(clay, phi_min){
 
 #' Variation of the thickness of soil layer
 #'
-#' This function calculates the variation of the thickness of soil layer as a function of organic matter
+#' @description This function calculates the variation of the thickness of soil layer as a function of organic matter. The parameter \eqn{f_{agg}} should be estimated from data on the relationship between bulk density (or its inverse, the specific volume) and soil organic matter content (see eq. 19 and fig. 4 in Meurer et al., 2020; from this data and other studies, a good average value of fagg should be around 3, which is the default value)
 #' @param f_agg an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}
 #' @param Delta_z_min minimal soil thickness if no organic matter was present
 #' @inheritParams pore_frac
@@ -83,7 +91,7 @@ Delta_z<-function(f_agg=3,
 
 #' Microporosity
 #'
-#' This function calculates the microporosity \eqn{\phi_{mic}} based on the variation of organic matter in the soil. It is used in \code{\link{pore_frac}}
+#' @description This function calculates the microporosity \eqn{\phi_{mic}} based on the variation of organic matter in the soil. It is used in \code{\link{pore_frac}}
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
 #' @inheritParams f_text_mic_func
@@ -121,7 +129,7 @@ phi_mic<-function(My_mic, Mo_mic, My_mes, Mo_mes,
 
 #' Matrix porosity
 #'
-#' This function calculates the matrix porosity \eqn{\phi_{mac}} based on the variation of organic matter in the soil. It is used in \code{\link{pore_frac}} to calculate mesoporosity \eqn{\phi_{mes}=\phi_{mat}-\phi_{mic}}
+#' @description This function calculates the matrix porosity \eqn{\phi_{mac}} based on the variation of organic matter in the soil. It is used in \code{\link{pore_frac}} to calculate mesoporosity \eqn{\phi_{mes}=\phi_{mat}-\phi_{mic}}
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
 #' @return one single value

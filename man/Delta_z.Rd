@@ -36,5 +36,5 @@ Delta_z(
 one single value
 }
 \description{
-This function calculates the variation of the thickness of soil layer as a function of organic matter
+This function calculates the variation of the thickness of soil layer as a function of organic matter. The parameter \eqn{f_{agg}} should be estimated from data on the relationship between bulk density (or its inverse, the specific volume) and soil organic matter content (see eq. 19 and fig. 4 in Meurer et al., 2020; from this data and other studies, a good average value of fagg should be around 3, which is the default value)
 }

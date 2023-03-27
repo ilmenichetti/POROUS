@@ -8,11 +8,11 @@ Description: This package contains a draft version of the dual porosity SOC deco
     Original description in: Meurer, Katharina Hildegard Elisabeth, Claire Chenu, Elsa Coucheney, Anke Marianne Herrmann, Thomas Keller, Thomas Kätterer, David Nimblad Svensson, and Nicholas Jarvis. “Modelling Dynamic Interactions between Soil Structure and the Storage and Turnover of Soil Organic Matter.” Biogeosciences 17, no. 20 (October 19, 2020): 5025–42. https://doi.org/10.5194/bg-17-5025-2020.
 Imports:
   SoilR
+Suggests: 
+    knitr,
+    rmarkdown
 License: CC BY 4.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
-Suggests: 
-    knitr,
-    rmarkdown
 VignetteBuilder: knitr

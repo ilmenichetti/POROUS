@@ -15,5 +15,13 @@ f_text_mic_func(clay, phi_min)
 one single value
 }
 \description{
-This function calculates the proportion of the textural pore space that comprises micropores. It is used in \code{\link{pore_frac}}
+This function calculates the proportion of the textural pore space that comprises micropores. It is used in \code{\link{pore_frac}}.
+This parameter was intended in the original paper (Meurer et al., 2020) as user defined, but its estimation has been developed further by N. Jarvis (personal communication).
+The method for its estimation is based on a Brooks-Corey soil water retention model: \deqn{ f_{mic_{text}} = \left( \frac{\psi_{mes  \textbackslash mac}}{\psi_{mic  \textbackslash mes}} \right) ^{\lambda_{mat(t)}}}
+where \eqn{\psi_{mes  \textbackslash mac}} is the pressure head defining the largest mesopore (set to -0.3) and \eqn{\psi_{mic  \textbackslash mes}} is the pressure head defining the largest micropore (set to -0.6). The parameter
+\eqn{\lambda_{mat(t)}} is in turn estimated as:
+\deqn{\lambda_{mat(t)}= \frac{log\left(\frac{\theta_w}{\phi_{min}}\right)}  {log\left(\frac{\psi_{mes  \textbackslash mac}}{\psi_{w}}\right)}}
+where \eqn{psi_w} is the wilting oint pressure head (set to -150 m) and \eqn{\theta_w} is estimated from a pedotransfer function:
+\deqn{\theta_w=0.004+0.5 \cdot f_{clay}}
+where \eqn{f_{clay}} is the soil clay content (\ifelse{html}{\out{kg kg<sup>-1</sup>}}{\eqn{kg \: kg^{-1}}}   ).
 }
