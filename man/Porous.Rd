@@ -62,15 +62,16 @@ While aboveground inputs are rooted in the mesopores, root inputs are distribute
 \eqn{ \frac{dM_{O_{(mic)}}}{dt} = \left( \epsilon \cdot k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot F_{prot} \cdot M_{O_{(mes)}} \right) - T_O } \cr
  \cr
 Please refer to the original paper for more details.  \cr
+ The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2 disappeared and are now calculaged as
+ \eqn{T_Y = k_{mix} \cdot (My_{mic}-My_{mes})} and \eqn{T_O = k_{mix} \cdot (Mo_{mic}-Mo_{mes})}. \cr
  \cr
 The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})} and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
-After substitutung the terms \eqn{\left( \frac{\phi_{mes}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mes}} and \eqn{\left( \frac{\phi_{mic}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mic}},
+After substituting the terms \eqn{\left( \frac{\phi_{mes}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mes}} and \eqn{\left( \frac{\phi_{mic}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mic}},
 The model can be rewritten in matrix form as :  \cr
  \cr
 \eqn{I_m(t) + I_r(t) \cdot N(C,t) + A(t) \cdot P(t) \cdot C(t)} \cr
 Or, more explicitly:  \cr
  \cr
- \eqn{\frac{dC}{dt}=\begin{bmatrix} I_m\\ 0\\ 0\\ 0\\ \end{bmatrix}+   \begin{bmatrix} I_r\\ 0\\ I_r\\ 0\\ \end{bmatrix} \cdot \begin{bmatrix} \varphi_{mes} & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & \varphi_{mic} & 0\\ 0 & 0 & 0 & 1\\ \end{bmatrix}+   \begin{bmatrix} -k_y & \epsilon & 0 & 0\\ 0 & -k_o & 0 & 0\\ T_Y & 0 & -k_y & \epsilon\\ 0 & T_O & 0 & -k_o\\ \end{bmatrix} \cdot \begin{bmatrix} 1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & F_{prot} & 0\\ 0 & 0 & 0 & F_{prot}\\ \end{bmatrix} \cdot \begin{bmatrix} M_{Y_{mes}}\\ M_{O_{mes}}\\ M_{Y_{mic}}\\ M_{O_{mic}} \end{bmatrix} } \cr
 The model is implemented with the \code{SoilR} package, but it is relying on a more conventional ODE definition (not its matrix form).
 }
 \references{

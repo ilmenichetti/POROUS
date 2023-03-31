@@ -10,9 +10,11 @@
 #' \eqn{ \frac{dM_{O_{(mic)}}}{dt} = \left( \epsilon \cdot k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot F_{prot} \cdot M_{O_{(mes)}} \right) - T_O } \cr
 #'  \cr
 #' Please refer to the original paper for more details.  \cr
+#'  The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2 disappeared and are now calculaged as
+#'  \eqn{T_Y = k_{mix} \cdot (My_{mic}-My_{mes})} and \eqn{T_O = k_{mix} \cdot (Mo_{mic}-Mo_{mes})}. \cr
 #'  \cr
 #' The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})} and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
-#' After substitutung the terms \eqn{\left( \frac{\phi_{mes}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mes}} and \eqn{\left( \frac{\phi_{mic}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mic}},
+#' After substituting the terms \eqn{\left( \frac{\phi_{mes}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mes}} and \eqn{\left( \frac{\phi_{mic}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mic}},
 #' The model can be rewritten in matrix form as :  \cr
 #'  \cr
 #' \eqn{I_m(t) + I_r(t) \cdot N(C,t) + A(t) \cdot P(t) \cdot C(t)} \cr
@@ -133,14 +135,16 @@ Porous<-function(ky=0.8, ko=0.035,
       SoilR:::OutFlux_by_PoolName(
         sourceName='My_mic',
         func=function(My_mic,My_mes){
-          kmix*((My_mic-My_mes)/2)
+          #kmix*((My_mic-My_mes)/2) older version of the model, private comm with Nick Jarvis
+          kmix*((My_mic-My_mes))
         }
       ),
       #To
       SoilR:::OutFlux_by_PoolName(
         sourceName='Mo_mic',
         func=function(Mo_mic,Mo_mes){
-          kmix*((Mo_mic-Mo_mes)/2)
+          #kmix*((Mo_mic-Mo_mes)/2) older version of the model, private comm with Nick Jarvis
+          kmix*((Mo_mic-Mo_mes))
         }
       )
     )
@@ -169,7 +173,8 @@ Porous<-function(ky=0.8, ko=0.035,
         sourceName='My_mic',
         destinationName='My_mes',
         func=function(My_mic, My_mes){
-          kmix*((My_mic-My_mes)/2)
+          #kmix*((My_mic-My_mes)/2)
+          kmix*((My_mic-My_mes))
         }
       ),
       #To
@@ -177,7 +182,8 @@ Porous<-function(ky=0.8, ko=0.035,
         sourceName='Mo_mic',
         destinationName='Mo_mes',
         func=function(Mo_mic, Mo_mes){
-          kmix*((Mo_mic-Mo_mes)/2)
+          #kmix*((Mo_mic-Mo_mes)/2)
+          kmix*((Mo_mic-Mo_mes))
         }
       )
     )
