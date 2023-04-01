@@ -18,9 +18,16 @@
 #' The model can be rewritten in matrix form as :  \cr
 #'  \cr
 #' \eqn{I_m(t) + I_r(t) \cdot N(C,t) + A(t) \cdot P(t) \cdot C(t)} \cr
-#' Or, more explicitly:  \cr
-#'  \cr
-#'  \eqn{\frac{dC}{dt}=\begin{bmatrix} I_m\\ 0\\ 0\\ 0\\ \end{bmatrix}+   \begin{bmatrix} I_r\\ 0\\ I_r\\ 0\\ \end{bmatrix} \cdot \begin{bmatrix} \varphi_{mes} & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & \varphi_{mic} & 0\\ 0 & 0 & 0 & 1\\ \end{bmatrix}+   \begin{bmatrix} -k_y & \epsilon & 0 & 0\\ 0 & -k_o & 0 & 0\\ T_Y & 0 & -k_y & \epsilon\\ 0 & T_O & 0 & -k_o\\ \end{bmatrix} \cdot \begin{bmatrix} 1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & F_{prot} & 0\\ 0 & 0 & 0 & F_{prot}\\ \end{bmatrix} \cdot \begin{bmatrix} M_{Y_{mes}}\\ M_{O_{mes}}\\ M_{Y_{mic}}\\ M_{O_{mic}} \end{bmatrix} } \cr
+# THE FOLLOWING EQUATION IS COMMENTED BECAUSE IT GAVE ERROR...
+# Or, more explicitly:  \cr
+#  \deqn{
+#  \frac{dC}{dt}=\begin{bmatrix} I_m\\  0\\  0\\ 0\\ \end{bmatrix} +
+#    \begin{bmatrix} I_r\\ 0\\ I_r\\ 0\\ \end{bmatrix} \cdot
+#    \begin{bmatrix} \varphi_{mes} & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & \varphi_{mic} & 0\\ 0 & 0 & 0 & 1\\ \end{bmatrix}+
+#    \begin{bmatrix} -k_y & \epsilon & 0 & 0\\ 0 & -k_o & 0 & 0\\ T_Y & 0 & -k_y & \epsilon\\ 0 & T_O & 0 & -k_o\\ \end{bmatrix} \cdot
+#    \begin{bmatrix} 1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & F_{prot} & 0\\ 0 & 0 & 0 & F_{prot}\\ \end{bmatrix} \cdot
+#    \begin{bmatrix} M_{Y_{mes}}\\ M_{O_{mes}}\\ M_{Y_{mic}}\\ M_{O_{mic}} \end{bmatrix}
+#         } \cr
 #' The model is implemented with the \code{SoilR} package, but it is relying on a more conventional ODE definition (not its matrix form).
 #'
 #' @param ky decomposition constant of the Young pool

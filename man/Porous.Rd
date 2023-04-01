@@ -70,8 +70,6 @@ After substituting the terms \eqn{\left( \frac{\phi_{mes}(t)}{\phi_{mes}(t)+\phi
 The model can be rewritten in matrix form as :  \cr
  \cr
 \eqn{I_m(t) + I_r(t) \cdot N(C,t) + A(t) \cdot P(t) \cdot C(t)} \cr
-Or, more explicitly:  \cr
- \cr
 The model is implemented with the \code{SoilR} package, but it is relying on a more conventional ODE definition (not its matrix form).
 }
 \references{
