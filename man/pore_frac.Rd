@@ -14,7 +14,8 @@ pore_frac(
   My_mes,
   Mo_mes,
   phi_min,
-  f_text_mic = NULL
+  f_text_mic = NULL,
+  f_agg = 3
 )
 }
 \arguments{

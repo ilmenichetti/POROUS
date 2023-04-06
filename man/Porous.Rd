@@ -18,7 +18,8 @@ Porous(
   gamma_o = 1.2,
   proportion = NULL,
   phi_min = 0.35,
-  f_text_mic = NULL
+  f_text_mic = NULL,
+  f_agg = 3
 )
 }
 \arguments{
@@ -47,6 +48,8 @@ Porous(
 \item{proportion}{this is a linearization term to make the proportion of the inputs between micro- and mesopores constant. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)}
 
 \item{phi_min}{minimum matrix porosity, user defined}
+
+\item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}}
 }
 \value{
 two values, the proportion of input in the mesopore and micropore Y pools

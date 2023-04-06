@@ -10,7 +10,7 @@ phi_mic(
   My_mes,
   Mo_mes,
   gamma_o,
-  f_agg = 3,
+  f_agg = f_agg,
   clay,
   Delta_z_min,
   phi_min,

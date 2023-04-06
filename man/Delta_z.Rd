@@ -5,7 +5,7 @@
 \title{Variation of the thickness of soil layer}
 \usage{
 Delta_z(
-  f_agg = 3,
+  f_agg = f_agg,
   Delta_z_min,
   My_mic,
   Mo_mic,

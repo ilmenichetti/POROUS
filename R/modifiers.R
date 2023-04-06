@@ -21,9 +21,9 @@ pore_frac<-function(phi_mac,
                     My_mes,
                     Mo_mes,
                     phi_min,
-                    f_text_mic=NULL){
+                    f_text_mic=NULL, f_agg=3){
 
-    phi_mic_calc<-phi_mic(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, clay=clay, Delta_z_min = Delta_z_min, phi_mac=phi_mac, phi_min = phi_min, f_text_mic = f_text_mic)
+    phi_mic_calc<-phi_mic(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, clay=clay, Delta_z_min = Delta_z_min, phi_mac=phi_mac, phi_min = phi_min, f_text_mic = f_text_mic, f_agg = f_agg)
 
     phi_mat_calc<-phi_mat(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, Delta_z_min = Delta_z_min, phi_mac=phi_mac, phi_min = phi_min)
 
@@ -75,7 +75,7 @@ f_text_mic_func<-function(clay, phi_min){
 #' @return one single value
 #' @export
 
-Delta_z<-function(f_agg=3,
+Delta_z<-function(f_agg=f_agg,
                   Delta_z_min,
                   My_mic, Mo_mic, My_mes, Mo_mes,
                   phi_mac,
@@ -101,7 +101,7 @@ Delta_z<-function(f_agg=3,
 
 phi_mic<-function(My_mic, Mo_mic, My_mes, Mo_mes,
                   gamma_o, #density of organic matter
-                  f_agg=3, #default suggested by Nick Jarvis
+                  f_agg=f_agg, #default suggested by Nick Jarvis
                   clay,
                   Delta_z_min, #soil layer thickess (m)
                   phi_min, #minimum matrix porosity, STILL MISSING
@@ -114,7 +114,7 @@ phi_mic<-function(My_mic, Mo_mic, My_mes, Mo_mes,
   }
 
 
-  Delta_z_calc=Delta_z(f_agg=3,
+  Delta_z_calc=Delta_z(f_agg=f_agg,
                        Delta_z_min=Delta_z_min,
                        My_mic, Mo_mic, My_mes, Mo_mes,
                        phi_mac,

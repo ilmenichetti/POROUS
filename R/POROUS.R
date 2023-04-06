@@ -60,7 +60,8 @@ Porous<-function(ky=0.8, ko=0.035,
                  gamma_o=1.2,
                  proportion=NULL,
                  phi_min=0.35,
-                 f_text_mic=NULL){
+                 f_text_mic=NULL,
+                 f_agg=3){
 
   time_symbol='t'
 
@@ -80,7 +81,7 @@ Porous<-function(ky=0.8, ko=0.035,
       SoilR:::InFlux_by_PoolName(
         destinationName='My_mes',
         func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
-          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic)[1]
+          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[1]
         }
       )
     } else{ #... else use the proportion
@@ -96,7 +97,7 @@ Porous<-function(ky=0.8, ko=0.035,
       SoilR:::InFlux_by_PoolName(
         destinationName='My_mic',
         func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
-          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic)[2]
+          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[2]
         }
       )
     } else {#... else use the reciprocal of the proportion
