@@ -2,7 +2,7 @@
 title: "Porous use case"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{my-vignette}
+  %\VignetteIndexEntry{Porous use case}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,7 +15,42 @@ knitr::opts_chunk$set(
 ```
 
 ## Intro
-This poorly written vignette contains one working example of how to run the model in its current state
+This poorly written vignette contains one working example of how to run the model in its current state.  
+The code is organized in a series of functions.
+
+
+```{r,echo=FALSE, fig.height = 3, fig.width = 7}
+library(DiagrammeR)
+DiagrammeR::grViz("digraph {
+
+graph [layout = dot, rankdir = LR]
+# define the global styles of the nodes. We can override these in box if we wish
+node [shape = rectangle, style = filled, fillcolor = Linen]
+
+Delta_z [label =  'Delta_z function', fillcolor = cornflowerblue]
+phi_mat [label = 'phi_mat function', fillcolor = darkseagreen3]
+phi_mic [label = 'phi_mic function', fillcolor = bisque2]
+f_text_mic_func [label = 'f_text_mic_func function', fillcolor = mediumpurple1]
+Porous [label = 'Porous function', fillcolor = darkorange]
+pore_frac [label= 'pore_frac function', fillcolor = goldenrod2]
+Msc [label= 'Msc function', fillcolor = yellowgreen]
+f_som [label= 'f_som function', fillcolor = hotpink]
+gamma_b [label= 'gamma_b function', fillcolor = seagreen2]
+run_Porous [label= 'run_Porous function', fillcolor = peachpuff]
+
+# edge definitions with the node IDs
+Delta_z -> phi_mat -> pore_frac
+Delta_z -> phi_mic -> pore_frac
+f_text_mic_func -> phi_mic
+pore_frac -> Porous
+Porous -> run_Porous
+Msc -> f_som -> run_Porous
+Msc -> gamma_b -> run_Porous
+
+}")
+```
+
+
 
 ## Example: how to to run the model.
 
@@ -37,15 +72,17 @@ modelObject<-Porous(ky=0.8, ko=0.00605,
                     Im=1.1, Ir=0.5,
                     F_prot=0.0,
                     phi_mac=0.2,
+                    phi_min=1,
                     clay=0.2,
                     Delta_z_min=20,
                     gamma_o=1.2)
 
 ```
-
+Many values can be omitted, and the function will use the defaults. In particular `f_text_mic `, if omitted, will be calculated internally with a specific function, `f_text_mic_func()`.
 
 `SoilR` has an internal function designed to plot any model (but fluxes do not always seem consistent in the representation):
-```{r}
+
+```{r, fig.height = 7, fig.width = 7}
 plotPoolGraph(modelObject)
 ```
 
@@ -72,9 +109,96 @@ head(Resp)
 ```
 
 Everything seems in order and we can proceed to plot:
-```{r fig1, fig.height = 8, fig.width = 6}
+```{r fig1, dpi = 72, fig.height = 8, fig.width = 8}
 par(mfrow=c(2,1), mar=c(4,4,0,1))
 matplot(times, Stocks, type="l", lty=1, col=1:4, xlab=" ", ylab="Pool contents", bty="n")
 legend("bottomright", c("My_mes", "Mo_mes", "My_mic", "Mo_mic"), lty=1, col=1:4, bty="n")
 matplot(times, Resp,  type="l", lty=1, col=1:2, xlab="Time", ylab="Respiration", bty="n")
 ```
+
+
+It is also possible to calculate the evolution of soil bulk densities and soil C concentration based on the simulated C stocks.  
+The soil bulk density relies on the function `gamma_b`:  
+```{r}
+f_som(My_mic=Stocks[,1],
+      Mo_mic=Stocks[,2],
+      My_mes=Stocks[,3],
+      Mo_mes=Stocks[,4],
+      Delta_z_min=20,
+      phi_min=0.35,
+      gamma_m=1.1)
+```
+
+While the soil C concentration on the function `f_som`:  
+```{r}
+gamma_b(My_mic=Stocks[,1],
+        Mo_mic=Stocks[,2],
+        My_mes=Stocks[,3],
+        Mo_mes=Stocks[,4],
+        Delta_z_min=20,
+        phi_min=1,
+        gamma_o=1.2,
+        gamma_m=1.1,
+        f_agg=3,
+        phi_mac=0.2)
+```
+  
+All the above functions can be run with a wrapper, `run_Porous`, that takes care of running the simulation and calculating bulk density and C concentration:
+
+```{r}
+results<-run_Porous(ky=0.8, ko=0.035,
+                     kmix=0.05,
+                     e=0.143,
+                     Im=1.1, Ir=0.5,
+                     F_prot=0.1,
+                     phi_mac=0.152,
+                     clay=0.2,
+                     Delta_z_min=4,
+                     gamma_o=1.2,
+                     gamma_m=1.3,
+                     proportion=NULL,
+                     phi_min=0.35,
+                     f_text_mic=NULL,
+                     f_agg=3,
+                     init=c(My_mes=1, Mo_mes=10,My_mic=0.6, Mo_mic=3),
+                     sim_length=20,
+                     sim_steps=0.1)
+
+head(results)
+```
+
+We can also specify a user-defined `f_text_mic`:
+
+
+```{r}
+results<-run_Porous(ky=0.8, ko=0.035,
+                    kmix=0.05,
+                    e=0.143,
+                    Im=1.1, Ir=0.5,
+                    F_prot=0.1,
+                    phi_mac=0.152,
+                    clay=0.2,
+                    Delta_z_min=4,
+                    gamma_o=1.2,
+                    gamma_m=1.3,
+                    proportion=NULL,
+                    phi_min=0.35,
+                    f_text_mic=0.507,
+                    f_agg=3,
+                    init=c(My_mes=1, Mo_mes=10,My_mic=0.6, Mo_mic=3),
+                    sim_length=100,
+                    sim_steps=0.1)
+```
+
+Results can be accessed as plotted as a data frame:  
+```{r fig2, dpi = 72, fig.height = 5, fig.width = 8}
+
+range_stocks<-range(results[,2:5])
+plot(results$time, results$My_mes.stocks, ylim=c(-2,range_stocks[2]), type="l", col=1, xlab="Years", ylab="C stocks")
+lines(results$time, results$Mo_mes.stocks, ylim=range_stocks, type="l", col=2)
+lines(results$time, results$My_mic.stocks, ylim=range_stocks, type="l", col=3)
+lines(results$time, results$Mo_mic.stocks, ylim=range_stocks, type="l", col=4)
+legend("bottomright", c("My_mes", "Mo_mes", "My_mic", "Mo_mic"), lty=1, col=1:4, bty="n")
+legend("bottomright", c("My_mes", "Mo_mes", "My_mic", "Mo_mic"), lty=1, col=1:4, bty="n")
+```
+
