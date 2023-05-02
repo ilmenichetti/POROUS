@@ -16,9 +16,9 @@ Delta_z(
 )
 }
 \arguments{
-\item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}}
+\item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}} (dimensionless)}
 
-\item{Delta_z_min}{minimal soil thickness if no organic matter was present}
+\item{Delta_z_min}{minimal soil thickness if no organic matter was present (cm)}
 
 \item{My_mic}{One of the four model pools (they are all summed up in this function for calculating the total)}
 
@@ -28,9 +28,7 @@ Delta_z(
 
 \item{Mo_mes}{One of the four model pools (they are all summed up in this function for calculating the total)}
 
-\item{phi_mac}{macroporosity}
-
-\item{gamma_o}{density of organic matter}
+\item{phi_mac}{macroporosity, (\eqn{\frac{cm^3 of water}{cm^3 of soil}})}
 }
 \value{
 one single value

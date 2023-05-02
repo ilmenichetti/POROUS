@@ -7,9 +7,9 @@
 f_text_mic_func(clay, phi_min)
 }
 \arguments{
-\item{clay}{soil clay fraction}
+\item{clay}{fraction of clay content (dimensionless, between 0 and 1)}
 
-\item{phi_min}{minimal porosity, user defined}
+\item{phi_min}{minimal porosity, (\eqn{\frac{cm^3 of water}{cm^3 of soil}})}
 }
 \value{
 one single value

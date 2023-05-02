@@ -30,36 +30,37 @@
 #         } \cr
 #' The model is implemented with the \code{SoilR} package, but it is relying on a more conventional ODE definition (not its matrix form).
 #'
-#' @param ky decomposition constant of the Young pool
-#' @param ko decomposition constant of the Old pool
-#' @param kmix mixing rate
-#' @param e efficiency, which is the transfer term between the pools and corresponds to the term h in the ICBM model in Kätterer et al. (2001)
-#' @param Im Inputs from aboveground
-#' @param Ir Inputs from roots, which is partitioned between micropore and mesopores with the function \code{\link{pore_frac}}
-#' @param F_prot protection provided by the micropore space
+#' @param ky decomposition constant of the Young pool \eqn{frac{1}{year}}
+#' @param ko decomposition constant of the Old pool \eqn{frac{1}{year}}
+#' @param kmix mixing rate \eqn{frac{1}{year}}
+#' @param e efficiency, which is the transfer term between the pools and corresponds to the term h in the ICBM model in Kätterer et al. (2001) (dimensionless)
+#' @param Im Inputs from aboveground.  Units are generally in (\eqn{g cm^{-2} year^{-1}), but in any case they should match the units of the initialization.
+#' @param Ir Inputs from roots, which is partitioned between micropore and mesopores with the function \code{\link{pore_frac}}. Units are generally in (\eqn{g cm^{-2} year^{-1}), but in any case they should match the units of the initialization.
+#' @param F_prot protection provided by the micropore space (dimensionless)
 #' @param proportion this is a linearization term to make the proportion of the inputs between micro- and mesopores constant. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)
-#' @param phi_min minimum matrix porosity, user defined
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
 #' @inheritParams f_text_mic_func
-#' @f_text_mic if this value is specified, the function \code{\link{f_text_mic_func}} is overridden
-#' @return two values, the proportion of input in the mesopore and micropore Y pools
-#'
+#' @f_text_mic if this value is user defined, the function \code{\link{f_text_mic_func}} is overridden, otherwise it is used to calculate it.
+#' @return two values, the proportion (between 0 and 1) of input in the mesopore and micropore Y pools
+#' @seealso \code{\link{run_Porous}}
 #' @references Meurer, Katharina Hildegard Elisabeth, Claire Chenu, Elsa Coucheney, Anke Marianne Herrmann, Thomas Keller, Thomas Kätterer, David Nimblad Svensson, and Nicholas Jarvis. “Modelling Dynamic Interactions between Soil Structure and the Storage and Turnover of Soil Organic Matter.” Biogeosciences 17, no. 20 (October 19, 2020): 5025–42. https://doi.org/10.5194/bg-17-5025-2020. \cr
 #' Kätterer, Thomas, and Olof Andrén. “The ICBM Family of Analytically Solved Models of Soil Carbon, Nitrogen and Microbial Biomass Dynamics — Descriptions and Application Examples.” Ecological Modelling 136, no. 2–3 (January 2001): 191–207. https://doi.org/10.1016/S0304-3800(00)00420-8.
 #' @export
 #'
-Porous<-function(ky=0.8, ko=0.035,
-                 kmix=0.05,
-                 e=0.143,
-                 Im=1.1, Ir=0.5,
+Porous<-function(ky=0.8,
+                 ko=0.04,
+                 kmix=0.02,
+                 e=0.15,
+                 Im=0.08,
+                 Ir=0.048,
                  F_prot=0.1,
-                 phi_mac=0.152,
+                 phi_mac=0.04,
+                 phi_min=0.35,
                  clay=0.2,
-                 Delta_z_min=4,
+                 Delta_z_min=14.2,
                  gamma_o=1.2,
                  proportion=NULL,
-                 phi_min=0.35,
                  f_text_mic=NULL,
                  f_agg=3){
 

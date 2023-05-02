@@ -6,53 +6,47 @@
 \usage{
 Porous(
   ky = 0.8,
-  ko = 0.035,
-  kmix = 0.05,
-  e = 0.143,
-  Im = 1.1,
-  Ir = 0.5,
+  ko = 0.04,
+  kmix = 0.02,
+  e = 0.15,
+  Im = 0.08,
+  Ir = 0.048,
   F_prot = 0.1,
-  phi_mac = 0.152,
+  phi_mac = 0.04,
+  phi_min = 0.35,
   clay = 0.2,
-  Delta_z_min = 4,
+  Delta_z_min = 14.2,
   gamma_o = 1.2,
   proportion = NULL,
-  phi_min = 0.35,
   f_text_mic = NULL,
   f_agg = 3
 )
 }
 \arguments{
-\item{ky}{decomposition constant of the Young pool}
+\item{ky}{decomposition constant of the Young pool \eqn{frac{1}{year}}}
 
-\item{ko}{decomposition constant of the Old pool}
+\item{ko}{decomposition constant of the Old pool \eqn{frac{1}{year}}}
 
-\item{kmix}{mixing rate}
+\item{kmix}{mixing rate \eqn{frac{1}{year}}}
 
-\item{e}{efficiency, which is the transfer term between the pools and corresponds to the term h in the ICBM model in Kätterer et al. (2001)}
+\item{e}{efficiency, which is the transfer term between the pools and corresponds to the term h in the ICBM model in Kätterer et al. (2001) (dimensionless)}
 
-\item{Im}{Inputs from aboveground}
+\item{F_prot}{protection provided by the micropore space (dimensionless)}
 
-\item{Ir}{Inputs from roots, which is partitioned between micropore and mesopores with the function \code{\link{pore_frac}}}
+\item{phi_mac}{macroporosity, (\eqn{\frac{cm^3 of water}{cm^3 of soil}})}
 
-\item{F_prot}{protection provided by the micropore space}
+\item{phi_min}{minimal porosity, (\eqn{\frac{cm^3 of water}{cm^3 of soil}})}
 
-\item{phi_mac}{macroporosity}
+\item{clay}{fraction of clay content (dimensionless, between 0 and 1)}
 
-\item{clay}{fraction of clay content}
-
-\item{Delta_z_min}{minimal soil thickness if no organic matter was present}
-
-\item{gamma_o}{density of organic matter}
+\item{Delta_z_min}{minimal soil thickness if no organic matter was present (cm)}
 
 \item{proportion}{this is a linearization term to make the proportion of the inputs between micro- and mesopores constant. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)}
 
-\item{phi_min}{minimum matrix porosity, user defined}
-
-\item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}}
+\item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}} (dimensionless)}
 }
 \value{
-two values, the proportion of input in the mesopore and micropore Y pools
+two values, the proportion (between 0 and 1) of input in the mesopore and micropore Y pools
 }
 \description{
 This function implements with the SoilR model development framework the dual porosity model described in Meurer et al. (2020).
@@ -78,4 +72,7 @@ The model is implemented with the \code{SoilR} package, but it is relying on a m
 \references{
 Meurer, Katharina Hildegard Elisabeth, Claire Chenu, Elsa Coucheney, Anke Marianne Herrmann, Thomas Keller, Thomas Kätterer, David Nimblad Svensson, and Nicholas Jarvis. “Modelling Dynamic Interactions between Soil Structure and the Storage and Turnover of Soil Organic Matter.” Biogeosciences 17, no. 20 (October 19, 2020): 5025–42. https://doi.org/10.5194/bg-17-5025-2020. \cr
 Kätterer, Thomas, and Olof Andrén. “The ICBM Family of Analytically Solved Models of Soil Carbon, Nitrogen and Microbial Biomass Dynamics — Descriptions and Application Examples.” Ecological Modelling 136, no. 2–3 (January 2001): 191–207. https://doi.org/10.1016/S0304-3800(00)00420-8.
+}
+\seealso{
+\code{\link{run_Porous}}
 }

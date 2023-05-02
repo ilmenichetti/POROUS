@@ -15,17 +15,15 @@ pore_frac(
   Mo_mes,
   phi_min,
   f_text_mic = NULL,
-  f_agg = 3
+  f_agg
 )
 }
 \arguments{
-\item{phi_mac}{macroporosity}
+\item{phi_mac}{macroporosity, (\eqn{\frac{cm^3 of water}{cm^3 of soil}})}
 
-\item{clay}{fraction of clay content}
+\item{clay}{fraction of clay content (dimensionless, between 0 and 1)}
 
-\item{Delta_z_min}{minimal soil thickness if no organic matter was present}
-
-\item{gamma_o}{density of organic matter}
+\item{Delta_z_min}{minimal soil thickness if no organic matter was present (cm)}
 
 \item{My_mic}{One of the four model pools (they are all summed up in this function for calculating the total)}
 
@@ -34,10 +32,15 @@ pore_frac(
 \item{My_mes}{One of the four model pools (they are all summed up in this function for calculating the total)}
 
 \item{Mo_mes}{One of the four model pools (they are all summed up in this function for calculating the total)}
+
+\item{phi_min}{minimal porosity, (\eqn{\frac{cm^3 of water}{cm^3 of soil}})}
 }
 \value{
 two values, the proportion of input in the mesopore and micropore Y pools
 }
 \description{
 This function  calculates the proportion of inputs in each of the two youg pools deending on the organic matter content
+}
+\seealso{
+\code{\link{phi_mic}}, \code{\link{phi_mat}}, \code{\link{f_som}}
 }

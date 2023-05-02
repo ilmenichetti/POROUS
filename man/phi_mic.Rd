@@ -27,17 +27,15 @@ phi_mic(
 
 \item{Mo_mes}{One of the four model pools (they are all summed up in this function for calculating the total)}
 
-\item{gamma_o}{density of organic matter}
+\item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}} (dimensionless)}
 
-\item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}}}
+\item{clay}{fraction of clay content (dimensionless, between 0 and 1)}
 
-\item{clay}{fraction of clay content}
+\item{Delta_z_min}{minimal soil thickness if no organic matter was present (cm)}
 
-\item{Delta_z_min}{minimal soil thickness if no organic matter was present}
+\item{phi_min}{minimal porosity, (\eqn{\frac{cm^3 of water}{cm^3 of soil}})}
 
-\item{phi_min}{minimal porosity, user defined}
-
-\item{phi_mac}{macroporosity}
+\item{phi_mac}{macroporosity, (\eqn{\frac{cm^3 of water}{cm^3 of soil}})}
 }
 \value{
 one single value
