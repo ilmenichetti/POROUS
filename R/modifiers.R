@@ -290,7 +290,6 @@ run_Porous<-function(ky=0.8,
 
 
 
-  init<-c(My_mes=1, Mo_mes=10,My_mic=0.6, Mo_mic=3)
   times<-seq(0,sim_length,by=sim_steps)
 
   modrun0<-Model_by_PoolNames(smod=modelObject, times=times, initialValues=init)

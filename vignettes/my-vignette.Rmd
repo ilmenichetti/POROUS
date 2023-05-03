@@ -1,5 +1,5 @@
 ---
-title: "Porous use case"
+title: "Porous model example run"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Porous use case}
@@ -15,8 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ## Intro
-This poorly written vignette contains one working example of how to run the model in its current state.  
-The code is organized in a series of functions.
+This poorly written vignette contains some working example of how to run the model in its current state.  
+The code is organized in a series of functions:
 
 
 ```{r,echo=FALSE, fig.height = 3, fig.width = 7}
@@ -52,7 +52,7 @@ Msc -> gamma_b -> run_Porous
 
 
 
-## Example: how to to run the model.
+## Example: how to to run the main model function (written within the SoilR model development framework)
 
 ```{r setup}
 library(Porous)
@@ -120,10 +120,10 @@ matplot(times, Resp,  type="l", lty=1, col=1:2, xlab="Time", ylab="Respiration",
 It is also possible to calculate the evolution of soil bulk densities and soil C concentration based on the simulated C stocks.  
 The soil bulk density relies on the function `gamma_b`:  
 ```{r}
-f_som(My_mic=Stocks[,1],
-      Mo_mic=Stocks[,2],
-      My_mes=Stocks[,3],
-      Mo_mes=Stocks[,4],
+f_som(My_mic=Stocks[1:20,1],
+      Mo_mic=Stocks[1:20,2],
+      My_mes=Stocks[1:20,3],
+      Mo_mes=Stocks[1:20,4],
       Delta_z_min=20,
       phi_min=0.35,
       gamma_m=1.1)
@@ -131,10 +131,10 @@ f_som(My_mic=Stocks[,1],
 
 While the soil C concentration on the function `f_som`:  
 ```{r}
-gamma_b(My_mic=Stocks[,1],
-        Mo_mic=Stocks[,2],
-        My_mes=Stocks[,3],
-        Mo_mes=Stocks[,4],
+gamma_b(My_mic=Stocks[1:20,1],
+        Mo_mic=Stocks[1:20,2],
+        My_mes=Stocks[1:20,3],
+        Mo_mes=Stocks[1:20,4],
         Delta_z_min=20,
         phi_min=1,
         gamma_o=1.2,
@@ -142,7 +142,9 @@ gamma_b(My_mic=Stocks[,1],
         f_agg=3,
         phi_mac=0.2)
 ```
-  
+
+
+## Running the model with the wrapper (more comfortable, less transparent)
 All the above functions can be run with a wrapper, `run_Porous`, that takes care of running the simulation and calculating bulk density and C concentration:
 
 ```{r}
@@ -160,7 +162,7 @@ results<-run_Porous(ky=0.8, ko=0.035,
                      phi_min=0.35,
                      f_text_mic=NULL,
                      f_agg=3,
-                     init=c(My_mes=1, Mo_mes=10,My_mic=0.6, Mo_mic=3),
+                     init=c(My_mes=1.32, Mo_mes=5.07, My_mic=2.84, Mo_mic=5.79),
                      sim_length=20,
                      sim_steps=0.1)
 
