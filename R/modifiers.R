@@ -23,7 +23,8 @@ pore_frac<-function(phi_mac,
                     My_mes,
                     Mo_mes,
                     phi_min,
-                    f_text_mic=NULL, f_agg){
+                    f_text_mic=NULL,
+                    f_agg){
 
     phi_mic_calc<-phi_mic(My_mic=My_mic, Mo_mic=Mo_mic, My_mes=My_mes, Mo_mes=Mo_mes, gamma_o=gamma_o, clay=clay, Delta_z_min = Delta_z_min, phi_mac=phi_mac, phi_min = phi_min, f_text_mic = f_text_mic, f_agg = f_agg)
 
@@ -81,6 +82,7 @@ Delta_z<-function(f_agg=f_agg,
                   gamma_o){
 
   Mso=My_mic + Mo_mic + My_mes + Mo_mes
+
   Delta_z=(((1+f_agg)*(Mso/gamma_o))+Delta_z_min)/(1-phi_mac)
 
   return(Delta_z)
@@ -106,6 +108,7 @@ phi_mic<-function(My_mic, Mo_mic, My_mes, Mo_mes,
                   phi_min, #minimum matrix porosity, STILL MISSING
                   phi_mac,
                   f_text_mic){
+
   if(is.null(f_text_mic)){
     f_text_mic_calc=f_text_mic_func(clay=clay, phi_min=phi_min)
   } else {
@@ -151,6 +154,7 @@ phi_mat<-function(My_mic, Mo_mic, My_mes, Mo_mes,
 
 
   phi_mat=(f_agg*(Mso/gamma_o)+Delta_z_min*phi_min)/Delta_z_calc
+
   return(phi_mat)
 }
 
@@ -327,7 +331,7 @@ run_Porous<-function(ky=0.8,
                phi_mac,
                gamma_o)
 
-  Stocks[,"My_mes stocks"]
+
   # results<-data.frame(Stocks[,"My_mes stocks"],
   #                       Stocks[,"Mo_mes stocks"],
   #                       Stocks[,"My_mic stocks"],
@@ -341,6 +345,41 @@ run_Porous<-function(ky=0.8,
 
     return(results)
 
+}
+
+
+
+
+
+#' Mass balance check
+#'
+#' @description This function calculates the mass balance between the C fluxes and stock change and the inputs. It is used mainly as a diagnostic for model development.
+#' @param results results as from the function  \code{\link{run_Porous}}
+#' @inheritParams run_Porous
+#' @return one single value
+#' @seealso \code{\link{Msm}}
+#' @export
+mass_balance<-function(results,
+                Im,
+                Ir,
+                sim_length
+                ){
+
+  cumulated_stocks<-results$My_mes.stocks+results$Mo_mes.stocks+
+    results$My_mic.stocks+results$Mo_mic.stocks
+
+  cumulated_resp<-results$My_mes.resp+results$Mo_mes.resp+
+                  results$My_mic.resp+results$Mo_mic.resp
+
+  mass_soil<-cumulated_stocks[length(cumulated_stocks)]-cumulated_stocks[1]+
+    sum(cumulated_resp)
+
+  mass_inputs<-sum(c(rep(Im, (sim_length)),
+                     rep(Ir, (sim_length))))
+
+  check_result<-mass_soil==mass_inputs
+
+  return(list("C balance soil"=mass_soil, "C balance inputs"=mass_inputs, "mass balance"=check_result))
 }
 
 

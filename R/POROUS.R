@@ -71,30 +71,32 @@ Porous<-function(ky=0.8,
   ##### IN
   ifs=SoilR:::InFluxList_by_PoolName(
     c(
+      #Inputs from shoots, direcly in Y mesopores
       SoilR:::InFlux_by_PoolName(
         destinationName='My_mes',
         func=function(t){
           Im
         }
       ),
-
-    if(is.null(proportion)){ #if cycle for inputs going to My_mes, if linear or not. If "proportion" is missing then nonlinear
-      SoilR:::InFlux_by_PoolName(
-        destinationName='My_mes',
-        func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
-          Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[1]
-        }
+      #Inputs from roots, partitioned based on either a pfixed partitioning factor or a calculated one
+      # Inputs to Y mesopores from roots
+      if(is.null(proportion)){ #if cycle for inputs going to My_mes, if linear or not. If "proportion" is missing then nonlinear
+        SoilR:::InFlux_by_PoolName(
+          destinationName='My_mes',
+          func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
+            Ir*pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[1]
+          }
+        )
+      } else{ #... else use the proportion
+        SoilR:::InFlux_by_PoolName(
+          destinationName='My_mes',
+          func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
+            Ir*proportion
+          }
       )
-    } else{ #... else use the proportion
-      SoilR:::InFlux_by_PoolName(
-        destinationName='My_mes',
-        func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
-          Ir*proportion
-        }
-      )
-    }
-        ,
-    if(is.null(proportion)){#if cycle for inputs going to My_ic, if linear or not. If "proportion" is missing then nonlinear
+      },
+      # Inputs to Y micropores from roots
+      if(is.null(proportion)){#if cycle for inputs going to My_ic, if linear or not. If "proportion" is missing then nonlinear
       SoilR:::InFlux_by_PoolName(
         destinationName='My_mic',
         func=function(t, My_mes, Mo_mes, My_mic, Mo_mic){
@@ -109,8 +111,8 @@ Porous<-function(ky=0.8,
         }
       )
     }
-    )
   )
+)
   ##### OUT
   ofs=SoilR:::OutFluxList_by_PoolName(
     c(
@@ -162,6 +164,7 @@ Porous<-function(ky=0.8,
   ##### INT
   intfs=SoilR:::InternalFluxList_by_PoolName(
     list(
+
       SoilR:::InternalFlux_by_PoolName(
         sourceName='My_mes',
         destinationName='Mo_mes',

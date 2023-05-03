@@ -148,49 +148,27 @@ gamma_b(My_mic=Stocks[1:20,1],
 All the above functions can be run with a wrapper, `run_Porous`, that takes care of running the simulation and calculating bulk density and C concentration:
 
 ```{r}
-results<-run_Porous(ky=0.8, ko=0.035,
-                     kmix=0.05,
-                     e=0.143,
-                     Im=1.1, Ir=0.5,
+results<-run_Porous(ky=0.8, ko=0.04,
+                     kmix=0.02,
+                     e=0.15,
+                     Im=0.08, Ir=0.048,
                      F_prot=0.1,
-                     phi_mac=0.152,
+                     phi_mac=0.04,
                      clay=0.2,
-                     Delta_z_min=4,
+                     Delta_z_min=14.2,
                      gamma_o=1.2,
-                     gamma_m=1.3,
+                     gamma_m=2.7,
                      proportion=NULL,
                      phi_min=0.35,
-                     f_text_mic=NULL,
+                     f_text_mic=0.5069,
                      f_agg=3,
-                     init=c(My_mes=1.32, Mo_mes=5.07, My_mic=2.84, Mo_mic=5.79),
+                     init=c(My_mes=0.132, Mo_mes=0.507, My_mic=0.284, Mo_mic=0.579),
                      sim_length=20,
                      sim_steps=0.1)
 
 head(results)
 ```
 
-We can also specify a user-defined `f_text_mic`:
-
-
-```{r}
-results<-run_Porous(ky=0.8, ko=0.035,
-                    kmix=0.05,
-                    e=0.143,
-                    Im=1.1, Ir=0.5,
-                    F_prot=0.1,
-                    phi_mac=0.152,
-                    clay=0.2,
-                    Delta_z_min=4,
-                    gamma_o=1.2,
-                    gamma_m=1.3,
-                    proportion=NULL,
-                    phi_min=0.35,
-                    f_text_mic=0.507,
-                    f_agg=3,
-                    init=c(My_mes=1, Mo_mes=10,My_mic=0.6, Mo_mic=3),
-                    sim_length=100,
-                    sim_steps=0.1)
-```
 
 Results can be accessed as plotted as a data frame:  
 ```{r fig2, dpi = 72, fig.height = 5, fig.width = 8}
@@ -210,4 +188,7 @@ plot(results$time, results$f_som_sim,  type="l", col=7, xlab="Years", ylab="C co
 plot(results$time, results$Delta_z_sim,  type="l", col=5, xlab="Years", ylab="Delta Z (cm)")
 ```
 
-
+A diagnostic function to check the mass balance of the model (sed for development) is also available:
+```{r}
+mass_balance(results,   Im=0.08, Ir=0.048,  sim_length=100)
+```
