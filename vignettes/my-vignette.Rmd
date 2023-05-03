@@ -201,7 +201,7 @@ legend("bottomright", c("My_mes", "Mo_mes", "My_mic", "Mo_mic"), lty=1, col=1:4,
 ```
 
 The `run_Porous`: function, on top of the simulation of C stocks from the main model function `porous`, gives also the simulated evolution of bulk density, the C concentration and layer thickness:
-```{r fig3, dpi = 72, fig.height = 5, fig.width = 8}
+```{r fig3, dpi = 72, fig.height = 12, fig.width = 8}
 par(mfrow=c(3,1))
 plot(results$time, results$gamma_b_sim,  type="l", col=6, xlab="Years", ylab="Bulk density")
 plot(results$time, results$f_som_sim,  type="l", col=7, xlab="Years", ylab="C concentration")
