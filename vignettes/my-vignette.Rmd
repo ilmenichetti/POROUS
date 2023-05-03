@@ -192,13 +192,20 @@ results<-run_Porous(ky=0.8, ko=0.035,
 
 Results can be accessed as plotted as a data frame:  
 ```{r fig2, dpi = 72, fig.height = 5, fig.width = 8}
-
 range_stocks<-range(results[,2:5])
 plot(results$time, results$My_mes.stocks, ylim=c(-2,range_stocks[2]), type="l", col=1, xlab="Years", ylab="C stocks")
 lines(results$time, results$Mo_mes.stocks, ylim=range_stocks, type="l", col=2)
 lines(results$time, results$My_mic.stocks, ylim=range_stocks, type="l", col=3)
 lines(results$time, results$Mo_mic.stocks, ylim=range_stocks, type="l", col=4)
 legend("bottomright", c("My_mes", "Mo_mes", "My_mic", "Mo_mic"), lty=1, col=1:4, bty="n")
-legend("bottomright", c("My_mes", "Mo_mes", "My_mic", "Mo_mic"), lty=1, col=1:4, bty="n")
 ```
+
+The `run_Porous`: function, on top of the simulation of C stocks from the main model function `porous`, gives also the simulated evolution of bulk density, the C concentration and layer thickness:
+```{r fig3, dpi = 72, fig.height = 5, fig.width = 8}
+par(mfrow=c(3,1))
+plot(results$time, results$gamma_b_sim,  type="l", col=6, xlab="Years", ylab="Bulk density")
+plot(results$time, results$f_som_sim,  type="l", col=7, xlab="Years", ylab="C concentration")
+plot(results$time, results$Delta_z_sim,  type="l", col=5, xlab="Years", ylab="Delta Z (cm)")
+```
+
 

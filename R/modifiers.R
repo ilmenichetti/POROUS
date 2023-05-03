@@ -319,6 +319,14 @@ run_Porous<-function(ky=0.8,
           f_agg,
           phi_mac)
 
+  Delta_z_sim<-Delta_z(f_agg=f_agg,
+               Delta_z_min=Delta_z_min,
+               My_mic=Stocks[,1],
+               Mo_mic=Stocks[,2],
+               My_mes=Stocks[,3],
+               Mo_mes=Stocks[,4],
+               phi_mac,
+               gamma_o)
 
   Stocks[,"My_mes stocks"]
   # results<-data.frame(Stocks[,"My_mes stocks"],
@@ -330,7 +338,7 @@ run_Porous<-function(ky=0.8,
   #                       Resp[,"My_mic resp"],
   #                       Resp[,"Mo_mic resp"], f_som_sim, gamma_b_sim) #create the data frame with the results
   results<-data.frame(time=times, Stocks,
-                      Resp, f_som_sim, gamma_b_sim) #create the data frame with the results
+                      Resp, f_som_sim, gamma_b_sim, Delta_z_sim) #create the data frame with the results
 
     return(results)
 
