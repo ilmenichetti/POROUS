@@ -2,7 +2,7 @@
 title: "Porous model example run"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Porous use case}
+  %\VignetteIndexEntry{Porous model example run}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -37,6 +37,7 @@ Msc [label= 'Msc function', fillcolor = yellowgreen]
 f_som [label= 'f_som function', fillcolor = hotpink]
 gamma_b [label= 'gamma_b function', fillcolor = seagreen2]
 run_Porous [label= 'run_Porous function', fillcolor = peachpuff]
+Delta_z_2 [label =  'Delta_z function, outside run', fillcolor = cornflowerblue]
 
 # edge definitions with the node IDs
 Delta_z -> phi_mat -> pore_frac
@@ -46,6 +47,7 @@ pore_frac -> Porous
 Porous -> run_Porous
 Msc -> f_som -> run_Porous
 Msc -> gamma_b -> run_Porous
+Porous -> Delta_z_2 -> run_Porous
 
 }")
 ```
@@ -70,7 +72,7 @@ modelObject<-Porous(ky=0.8, ko=0.00605,
                     kmix=0.9,
                     e=0.13,
                     Im=1.1, Ir=0.5,
-                    F_prot=0.0,
+                    F_prot=0.1,
                     phi_mac=0.2,
                     phi_min=1,
                     clay=0.2,
@@ -145,7 +147,7 @@ gamma_b(My_mic=Stocks[1:20,1],
 
 
 ## Running the model with the wrapper (more comfortable, less transparent)
-All the above functions can be run with a wrapper, `run_Porous`, that takes care of running the simulation and calculating bulk density and C concentration:
+All the above functions can be run with a wrapper, `run_Porous`, that takes care of running the simulation and calculating bulk density, C concentration and layer thickness evolution:
 
 ```{r}
 results<-run_Porous(ky=0.8, ko=0.04,
@@ -168,6 +170,7 @@ results<-run_Porous(ky=0.8, ko=0.04,
 
 head(results)
 ```
+The wrapper first runs a C stocks simulation (including with variable layer thickness calculation) and then it uses the C stocks from the simulation to calculate again the layer thickness and calculate for the first time SOC concentration and soil bulk density to include these variables in the results. This is done because it is not possible (or I do not know the way) to export the internal calculations from the SoilR model.
 
 
 Results can be accessed as plotted as a data frame:  
@@ -190,5 +193,5 @@ plot(results$time, results$Delta_z_sim,  type="l", col=5, xlab="Years", ylab="De
 
 A diagnostic function to check the mass balance of the model (sed for development) is also available:
 ```{r}
-mass_balance(results,   Im=0.08, Ir=0.048,  sim_length=100)
+mass_balance(results,   Im=0.08, Ir=0.048,  sim_length=100, sim_steps=0.1)
 ```

@@ -25,6 +25,16 @@
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/my-vignette.html">Porous model example run</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -50,11 +60,12 @@
 <span>  <span class="va">My_mes</span>,</span>
 <span>  <span class="va">Mo_mes</span>,</span>
 <span>  <span class="va">gamma_o</span>,</span>
-<span>  f_agg <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  f_agg <span class="op">=</span> <span class="va">f_agg</span>,</span>
 <span>  <span class="va">clay</span>,</span>
 <span>  <span class="va">Delta_z_min</span>,</span>
-<span>  phi_min <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  <span class="va">phi_mac</span></span>
+<span>  <span class="va">phi_min</span>,</span>
+<span>  <span class="va">phi_mac</span>,</span>
+<span>  <span class="va">f_text_mic</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -76,28 +87,24 @@
 <dd><p>One of the four model pools (they are all summed up in this function for calculating the total)</p></dd>
 
 
-<dt>gamma_o</dt>
-<dd><p>density of organic matter</p></dd>
-
-
 <dt>f_agg</dt>
-<dd><p>an aggregation factor (m3 pore space m−3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \(V_{agg}\), and the volume of organic matter \(V_{s_o}\)</p></dd>
+<dd><p>an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \(V_{agg}\), and the volume of organic matter \(V_{s_o}\) (dimensionless)</p></dd>
 
 
 <dt>clay</dt>
-<dd><p>fraction of clay content</p></dd>
+<dd><p>fraction of clay content (dimensionless, between 0 and 1)</p></dd>
 
 
 <dt>Delta_z_min</dt>
-<dd><p>minimal soil thickness if no organic matter was present</p></dd>
+<dd><p>minimal soil thickness if no organic matter was present (cm)</p></dd>
 
 
 <dt>phi_min</dt>
-<dd><p>minimal porosity, user defined</p></dd>
+<dd><p>minimal porosity, (\(\frac{cm^3 of water}{cm^3 of soil}\))</p></dd>
 
 
 <dt>phi_mac</dt>
-<dd><p>macroporosity</p></dd>
+<dd><p>macroporosity, (\(\frac{cm^3 of water}{cm^3 of soil}\))</p></dd>
 
 </dl></div>
     <div id="value">

@@ -34,7 +34,7 @@ pore_frac<-function(phi_mac,
 
   mes_f=phi_mes_calc/(phi_mes_calc+phi_mic_calc)
   mic_f=phi_mic_calc/(phi_mes_calc+phi_mic_calc)
-  return(c(mes_f, mic_f))
+  return(c("mes_frac"=mes_f, "mic_frac"=mic_f))
 }
 
 
@@ -81,7 +81,7 @@ Delta_z<-function(f_agg=f_agg,
                   phi_mac,
                   gamma_o){
 
-  Mso=My_mic + Mo_mic + My_mes + Mo_mes
+  Mso=as.numeric(My_mic + Mo_mic + My_mes + Mo_mes)
 
   Delta_z=(((1+f_agg)*(Mso/gamma_o))+Delta_z_min)/(1-phi_mac)
 
@@ -123,7 +123,7 @@ phi_mic<-function(My_mic, Mo_mic, My_mes, Mo_mes,
                        gamma_o)
 
   phi_mic=((f_agg*((My_mic+Mo_mic)/gamma_o))+f_text_mic_calc*Delta_z_min*phi_min)/Delta_z_calc
-  return(phi_mic)
+  return("phi_mic"=as.numeric(phi_mic))
 }
 
 
@@ -155,7 +155,7 @@ phi_mat<-function(My_mic, Mo_mic, My_mes, Mo_mes,
 
   phi_mat=(f_agg*(Mso/gamma_o)+Delta_z_min*phi_min)/Delta_z_calc
 
-  return(phi_mat)
+  return("phi_mat"=as.numeric(phi_mat))
 }
 
 
@@ -362,14 +362,15 @@ run_Porous<-function(ky=0.8,
 mass_balance<-function(results,
                 Im,
                 Ir,
-                sim_length
+                sim_length,
+                sim_steps
                 ){
 
   cumulated_stocks<-results$My_mes.stocks+results$Mo_mes.stocks+
     results$My_mic.stocks+results$Mo_mic.stocks
 
-  cumulated_resp<-results$My_mes.resp+results$Mo_mes.resp+
-                  results$My_mic.resp+results$Mo_mic.resp
+  cumulated_resp<-(results$My_mes.resp+results$Mo_mes.resp+
+                  results$My_mic.resp+results$Mo_mic.resp)*sim_steps
 
   mass_soil<-cumulated_stocks[length(cumulated_stocks)]-cumulated_stocks[1]+
     sum(cumulated_resp)
