@@ -85,8 +85,8 @@
 <p>This poorly written vignette contains some working example of how to
 run the model in its current state.<br>
 The code is organized in a series of functions:</p>
-<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-e4a48da43faa10c1d35f" style="width:672px;height:288px;"></div>
-<script type="application/json" data-for="htmlwidget-e4a48da43faa10c1d35f">{"x":{"diagram":"digraph {\n\ngraph [layout = dot, rankdir = LR]\n# define the global styles of the nodes. We can override these in box if we wish\nnode [shape = rectangle, style = filled, fillcolor = Linen]\n\nDelta_z [label =  \"Delta_z function\", fillcolor = cornflowerblue]\nphi_mat [label = \"phi_mat function\", fillcolor = darkseagreen3]\nphi_mic [label = \"phi_mic function\", fillcolor = bisque2]\nf_text_mic_func [label = \"f_text_mic_func function\", fillcolor = mediumpurple1]\nPorous [label = \"Porous function\", fillcolor = darkorange]\npore_frac [label= \"pore_frac function\", fillcolor = goldenrod2]\nMsc [label= \"Msc function\", fillcolor = yellowgreen]\nf_som [label= \"f_som function\", fillcolor = hotpink]\ngamma_b [label= \"gamma_b function\", fillcolor = seagreen2]\nrun_Porous [label= \"run_Porous function\", fillcolor = peachpuff]\n\n# edge definitions with the node IDs\nDelta_z -> phi_mat -> pore_frac\nDelta_z -> phi_mic -> pore_frac\nf_text_mic_func -> phi_mic\npore_frac -> Porous\nPorous -> run_Porous\nMsc -> f_som -> run_Porous\nMsc -> gamma_b -> run_Porous\n\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-ebd29a2ef7103d77929f" style="width:672px;height:288px;"></div>
+<script type="application/json" data-for="htmlwidget-ebd29a2ef7103d77929f">{"x":{"diagram":"digraph {\n\ngraph [layout = dot, rankdir = LR]\n# define the global styles of the nodes. We can override these in box if we wish\nnode [shape = rectangle, style = filled, fillcolor = Linen]\n\nDelta_z [label =  \"Delta_z function\", fillcolor = cornflowerblue]\nphi_mat [label = \"phi_mat function\", fillcolor = darkseagreen3]\nphi_mic [label = \"phi_mic function\", fillcolor = bisque2]\nf_text_mic_func [label = \"f_text_mic_func function\", fillcolor = mediumpurple1]\nPorous [label = \"Porous function\", fillcolor = darkorange]\npore_frac [label= \"pore_frac function\", fillcolor = goldenrod2]\nMsc [label= \"Msc function\", fillcolor = yellowgreen]\nf_som [label= \"f_som function\", fillcolor = hotpink]\ngamma_b [label= \"gamma_b function\", fillcolor = seagreen2]\nrun_Porous [label= \"run_Porous function\", fillcolor = peachpuff]\nDelta_z_2 [label =  \"Delta_z function, outside run\", fillcolor = cornflowerblue]\n\n# edge definitions with the node IDs\nDelta_z -> phi_mat -> pore_frac\nDelta_z -> phi_mic -> pore_frac\nf_text_mic_func -> phi_mic\npore_frac -> Porous\nPorous -> run_Porous\nMsc -> f_som -> run_Porous\nMsc -> gamma_b -> run_Porous\nPorous -> Delta_z_2 -> run_Porous\n\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="example-how-to-to-run-the-main-model-function-written-within-the-soilr-model-development-framework">Example: how to to run the main model function (written within the
@@ -112,12 +112,13 @@ specified the parameter will have default value), such as:</p>
 <span>                    kmix<span class="op">=</span><span class="fl">0.9</span>,</span>
 <span>                    e<span class="op">=</span><span class="fl">0.13</span>,</span>
 <span>                    Im<span class="op">=</span><span class="fl">1.1</span>, Ir<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span>                    F_prot<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span>                    F_prot<span class="op">=</span><span class="fl">0.1</span>,</span>
 <span>                    phi_mac<span class="op">=</span><span class="fl">0.2</span>,</span>
 <span>                    phi_min<span class="op">=</span><span class="fl">1</span>,</span>
 <span>                    clay<span class="op">=</span><span class="fl">0.2</span>,</span>
 <span>                    Delta_z_min<span class="op">=</span><span class="fl">20</span>,</span>
-<span>                    gamma_o<span class="op">=</span><span class="fl">1.2</span><span class="op">)</span></span></code></pre></div>
+<span>                    gamma_o<span class="op">=</span><span class="fl">1.2</span>,</span>
+<span>                    f_agg<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <p>Many values can be omitted, and the function will use the defaults.
 In particular <code>f_text_mic</code>, if omitted, will be calculated
 internally with a specific function, <code><a href="../reference/f_text_mic_func.html">f_text_mic_func()</a></code>.</p>
@@ -127,8 +128,8 @@ representation):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SoilR/man/plotPoolGraph.html" class="external-link">plotPoolGraph</a></span><span class="op">(</span><span class="va">modelObject</span><span class="op">)</span></span></code></pre></div>
 <p><img src="my-vignette_files/figure-html/unnamed-chunk-5-1.png" width="672"></p>
-<p>Now we can run the model, for wich we need to initialize the starting
-values</p>
+<p>Now we can run the model, for which we need to initialize the
+starting values</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">init</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>My_mes<span class="op">=</span><span class="fl">1</span>, Mo_mes<span class="op">=</span><span class="fl">10</span>,My_mic<span class="op">=</span><span class="fl">0.6</span>, Mo_mic<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="va">times</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">20</span>,by<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span></code></pre></div>
@@ -145,13 +146,13 @@ can extract the C stocks and respiration fluxes:</p>
 it):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">Resp</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           [,1] [,2]         [,3]      [,4]</span></span>
-<span><span class="co">#&gt; [1,] 0.8000000    0 -0.360000000 -6.300000</span></span>
-<span><span class="co">#&gt; [2,] 0.7257902    0 -0.200615068 -4.817084</span></span>
-<span><span class="co">#&gt; [3,] 0.6696608    0 -0.087480390 -3.684389</span></span>
-<span><span class="co">#&gt; [4,] 0.6266788    0 -0.007528916 -2.819208</span></span>
-<span><span class="co">#&gt; [5,] 0.5932938    0  0.048621137 -2.158377</span></span>
-<span><span class="co">#&gt; [6,] 0.5669394    0  0.087728304 -1.653596</span></span></code></pre></div>
+<span><span class="co">#&gt;           [,1] [,2]       [,3]        [,4]</span></span>
+<span><span class="co">#&gt; [1,] 0.6960000    0 0.04176000 0.001579050</span></span>
+<span><span class="co">#&gt; [2,] 0.7069930    0 0.04583590 0.001882993</span></span>
+<span><span class="co">#&gt; [3,] 0.7202573    0 0.04955593 0.002137364</span></span>
+<span><span class="co">#&gt; [4,] 0.7350393    0 0.05298300 0.002350339</span></span>
+<span><span class="co">#&gt; [5,] 0.7507724    0 0.05616618 0.002528744</span></span>
+<span><span class="co">#&gt; [6,] 0.7670322    0 0.05914384 0.002678287</span></span></code></pre></div>
 <p>Everything seems in order and we can proceed to plot:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>, mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">4</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -170,9 +171,9 @@ The soil bulk density relies on the function <code>gamma_b</code>:</p>
 <span>      Delta_z_min<span class="op">=</span><span class="fl">20</span>,</span>
 <span>      phi_min<span class="op">=</span><span class="fl">0.35</span>,</span>
 <span>      gamma_m<span class="op">=</span><span class="fl">1.1</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] 0.5051903 0.5144970 0.5212742 0.5262390 0.5298873 0.5325699 0.5345388</span></span>
-<span><span class="co">#&gt;  [8] 0.5359782 0.5370233 0.5377745 0.5383069 0.5386765 0.5389256 0.5390857</span></span>
-<span><span class="co">#&gt; [15] 0.5391810 0.5392292 0.5392441 0.5392357 0.5392117 0.5391777</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 0.5051903 0.5066468 0.5080669 0.5094489 0.5107916 0.5120950 0.5133593</span></span>
+<span><span class="co">#&gt;  [8] 0.5145852 0.5157737 0.5169259 0.5180431 0.5191266 0.5201777 0.5211977</span></span>
+<span><span class="co">#&gt; [15] 0.5221878 0.5231494 0.5240837 0.5249918 0.5258749 0.5267340</span></span></code></pre></div>
 <p>While the soil C concentration on the function
 <code>f_som</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -186,9 +187,9 @@ The soil bulk density relies on the function <code>gamma_b</code>:</p>
 <span>        gamma_m<span class="op">=</span><span class="fl">1.1</span>,</span>
 <span>        f_agg<span class="op">=</span><span class="fl">3</span>,</span>
 <span>        phi_mac<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] 0.1700971 0.1719277 0.1732436 0.1741985 0.1748954 0.1754052 0.1757780</span></span>
-<span><span class="co">#&gt;  [8] 0.1760498 0.1762467 0.1763881 0.1764882 0.1765576 0.1766044 0.1766345</span></span>
-<span><span class="co">#&gt; [15] 0.1766524 0.1766614 0.1766642 0.1766626 0.1766581 0.1766517</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 0.1700971 0.1703854 0.1706659 0.1709382 0.1712022 0.1714579 0.1717054</span></span>
+<span><span class="co">#&gt;  [8] 0.1719449 0.1721767 0.1724010 0.1726180 0.1728282 0.1730317 0.1732288</span></span>
+<span><span class="co">#&gt; [15] 0.1734199 0.1736052 0.1737849 0.1739593 0.1741287 0.1742933</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="running-the-model-with-the-wrapper-more-comfortable-less-transparent">Running the model with the wrapper (more comfortable, less
@@ -196,9 +197,10 @@ transparent)<a class="anchor" aria-label="anchor" href="#running-the-model-with-
 </h2>
 <p>All the above functions can be run with a wrapper,
 <code>run_Porous</code>, that takes care of running the simulation and
-calculating bulk density and C concentration:</p>
+calculating bulk density, C concentration and layer thickness
+evolution:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">results</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/run_Porous.html">run_Porous</a></span><span class="op">(</span>ky<span class="op">=</span><span class="fl">0.8</span>, ko<span class="op">=</span><span class="fl">0.04</span>,</span>
+<code class="sourceCode R"><span><span class="va">simulation</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/run_Porous.html">run_Porous</a></span><span class="op">(</span>ky<span class="op">=</span><span class="fl">0.8</span>, ko<span class="op">=</span><span class="fl">0.04</span>,</span>
 <span>                     kmix<span class="op">=</span><span class="fl">0.02</span>,</span>
 <span>                     e<span class="op">=</span><span class="fl">0.15</span>,</span>
 <span>                     Im<span class="op">=</span><span class="fl">0.08</span>, Ir<span class="op">=</span><span class="fl">0.048</span>,</span>
@@ -216,21 +218,35 @@ calculating bulk density and C concentration:</p>
 <span>                     sim_length<span class="op">=</span><span class="fl">20</span>,</span>
 <span>                     sim_steps<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">simulation</span><span class="op">$</span><span class="va">`mass balance`</span></span>
+<span><span class="co">#&gt; [1] 2.560000 2.560623</span></span>
+<span></span>
+<span><span class="va">results</span><span class="op">&lt;-</span><span class="va">simulation</span><span class="op">$</span><span class="va">results</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   time My_mes.stocks Mo_mes.stocks My_mic.stocks Mo_mic.stocks My_mes.resp</span></span>
-<span><span class="co">#&gt; 1  0.0    0.13200000     0.5070000     0.2840000     0.5790000  0.10560000</span></span>
-<span><span class="co">#&gt; 2  0.1    0.12299153     0.5086716     0.2854283     0.5790569  0.09839323</span></span>
-<span><span class="co">#&gt; 3  0.2    0.11480162     0.5102367     0.2868089     0.5791218  0.09184129</span></span>
-<span><span class="co">#&gt; 4  0.3    0.10735329     0.5117052     0.2881459     0.5791940  0.08588263</span></span>
-<span><span class="co">#&gt; 5  0.4    0.10058027     0.5130858     0.2894428     0.5792733  0.08046422</span></span>
-<span><span class="co">#&gt; 6  0.5    0.09442165     0.5143863     0.2907027     0.5793591  0.07553732</span></span>
+<span><span class="co">#&gt; 1  0.0     0.1320000     0.5070000     0.2840000     0.5790000  0.08976000</span></span>
+<span><span class="co">#&gt; 2  0.1     0.1436485     0.5087969     0.2718964     0.5789944  0.09768101</span></span>
+<span><span class="co">#&gt; 3  0.2     0.1543548     0.5107245     0.2599356     0.5789782  0.10496128</span></span>
+<span><span class="co">#&gt; 4  0.3     0.1641962     0.5127712     0.2481141     0.5789517  0.11165345</span></span>
+<span><span class="co">#&gt; 5  0.4     0.1732404     0.5149268     0.2364291     0.5789154  0.11780350</span></span>
+<span><span class="co">#&gt; 6  0.5     0.1815503     0.5171819     0.2248776     0.5788696  0.12345420</span></span>
 <span><span class="co">#&gt;   Mo_mes.resp My_mic.resp Mo_mic.resp  f_som_sim gamma_b_sim Delta_z_sim</span></span>
-<span><span class="co">#&gt; 1           0 0.003040000 0.001440000 0.05684442    1.320691    20.00694</span></span>
-<span><span class="co">#&gt; 2           0 0.003248734 0.001407707 0.05663550    1.321741    19.98663</span></span>
-<span><span class="co">#&gt; 3           0 0.003440146 0.001377702 0.05645050    1.322672    19.96864</span></span>
-<span><span class="co">#&gt; 4           0 0.003615853 0.001349777 0.05628720    1.323495    19.95277</span></span>
-<span><span class="co">#&gt; 5           0 0.003777251 0.001323750 0.05614365    1.324219    19.93883</span></span>
-<span><span class="co">#&gt; 6           0 0.003925621 0.001299455 0.05601807    1.324854    19.92663</span></span></code></pre></div>
+<span><span class="co">#&gt; 1           0  0.01931200 0.001968600 0.05684442    1.320691    20.00694</span></span>
+<span><span class="co">#&gt; 2           0  0.01848896 0.001968581 0.05689211    1.320452    20.01158</span></span>
+<span><span class="co">#&gt; 3           0  0.01767562 0.001968526 0.05691555    1.320334    20.01386</span></span>
+<span><span class="co">#&gt; 4           0  0.01687176 0.001968436 0.05691699    1.320327    20.01400</span></span>
+<span><span class="co">#&gt; 5           0  0.01607718 0.001968312 0.05689837    1.320421    20.01219</span></span>
+<span><span class="co">#&gt; 6           0  0.01529168 0.001968157 0.05686153    1.320605    20.00861</span></span></code></pre></div>
+<p>The wrapper first runs a C stocks simulation (including with variable
+layer thickness calculation) and then it uses the C stocks from the
+simulation to calculate again the layer thickness and calculate for the
+first time SOC concentration and soil bulk density to include these
+variables in the results. This is done because it is not possible (or I
+do not know the way) to export the internal calculations from the SoilR
+model.<br>
+Please notice that the above code is overriding the
+<code>f_text_mic</code> calculation.</p>
 <p>Results can be accessed as plotted as a data frame:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">range_stocks</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">results</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span>
@@ -250,18 +266,53 @@ thickness:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">time</span>, <span class="va">results</span><span class="op">$</span><span class="va">f_som_sim</span>,  type<span class="op">=</span><span class="st">"l"</span>, col<span class="op">=</span><span class="fl">7</span>, xlab<span class="op">=</span><span class="st">"Years"</span>, ylab<span class="op">=</span><span class="st">"C concentration"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">time</span>, <span class="va">results</span><span class="op">$</span><span class="va">Delta_z_sim</span>,  type<span class="op">=</span><span class="st">"l"</span>, col<span class="op">=</span><span class="fl">5</span>, xlab<span class="op">=</span><span class="st">"Years"</span>, ylab<span class="op">=</span><span class="st">"Delta Z (cm)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="my-vignette_files/figure-html/fig3-1.png" width="576"></p>
-<p>A diagnostic function to check the mass balance of the model (sed for
-development) is also available:</p>
+<p>The package contains an alternative implementation of the same model,
+directly written around the <code>deSolve</code> package (but wrapped to
+have the same syntax). The following is an example of a model run at
+equilibrium (so the pools are supposed to be flat):</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/mass_balance.html">mass_balance</a></span><span class="op">(</span><span class="va">results</span>,   Im<span class="op">=</span><span class="fl">0.08</span>, Ir<span class="op">=</span><span class="fl">0.048</span>,  sim_length<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $`C balance soil`</span></span>
-<span><span class="co">#&gt; [1] 7.953207</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $`C balance inputs`</span></span>
-<span><span class="co">#&gt; [1] 12.8</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $`mass balance`</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">simulation_deSolve</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/run_Porous_deSolve.html">run_Porous_deSolve</a></span><span class="op">(</span>ky<span class="op">=</span><span class="fl">0.8</span>, ko<span class="op">=</span><span class="fl">0.04</span>,</span>
+<span>                                        kmix<span class="op">=</span><span class="fl">0.02</span>,</span>
+<span>                                        e<span class="op">=</span><span class="fl">0.15</span>,</span>
+<span>                                        Im<span class="op">=</span><span class="fl">0.08</span>, Ir<span class="op">=</span><span class="fl">0.048</span>,</span>
+<span>                                        F_prot<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span>                                        phi_mac<span class="op">=</span><span class="fl">0.04</span>,</span>
+<span>                                        clay<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span>                                        Delta_z_min<span class="op">=</span><span class="fl">14.2</span>,</span>
+<span>                                        gamma_o<span class="op">=</span><span class="fl">1.2</span>,</span>
+<span>                                        gamma_m<span class="op">=</span><span class="fl">2.7</span>,</span>
+<span>                                        proportion<span class="op">=</span><span class="cn">NULL</span>,</span>
+<span>                                        phi_min<span class="op">=</span><span class="fl">0.35</span>,</span>
+<span>                                        f_text_mic<span class="op">=</span><span class="fl">0.5069</span>,</span>
+<span>                                        f_agg<span class="op">=</span><span class="fl">3</span>,</span>
+<span>                                        init<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>My_mes<span class="op">=</span><span class="fl">0.132</span>, Mo_mes<span class="op">=</span><span class="fl">0.507</span>, My_mic<span class="op">=</span><span class="fl">0.284</span>, Mo_mic<span class="op">=</span><span class="fl">0.579</span><span class="op">)</span>,</span>
+<span>                                        sim_length<span class="op">=</span><span class="fl">30</span>,</span>
+<span>                                       sim_steps<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">results_deSolve</span><span class="op">&lt;-</span><span class="va">simulation_deSolve</span><span class="op">$</span><span class="va">results</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   time My_mes.stocks Mo_mes.stocks My_mic.stocks Mo_mic.stocks  f_som_sim</span></span>
+<span><span class="co">#&gt; 1  0.0     0.1320000     0.5070000     0.2840000     0.5790000 0.05684442</span></span>
+<span><span class="co">#&gt; 2  0.1     0.1322677     0.5070058     0.2836908     0.5789998 0.05684313</span></span>
+<span><span class="co">#&gt; 3  0.2     0.1325133     0.5070146     0.2833857     0.5789992 0.05684130</span></span>
+<span><span class="co">#&gt; 4  0.3     0.1327387     0.5070262     0.2830843     0.5789982 0.05683897</span></span>
+<span><span class="co">#&gt; 5  0.4     0.1329451     0.5070404     0.2827868     0.5789970 0.05683618</span></span>
+<span><span class="co">#&gt; 6  0.5     0.1331345     0.5070568     0.2824930     0.5789954 0.05683298</span></span>
+<span><span class="co">#&gt;   gamma_b_sim Delta_z_sim</span></span>
+<span><span class="co">#&gt; 1    1.320691    20.00694</span></span>
+<span><span class="co">#&gt; 2    1.320698    20.00682</span></span>
+<span><span class="co">#&gt; 3    1.320707    20.00664</span></span>
+<span><span class="co">#&gt; 4    1.320719    20.00641</span></span>
+<span><span class="co">#&gt; 5    1.320733    20.00614</span></span>
+<span><span class="co">#&gt; 6    1.320749    20.00583</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">range_stocks</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">My_mes.stocks</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="va">range_stocks</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"l"</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">Mo_mes.stocks</span>, col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">My_mic.stocks</span>, col<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">Mo_mic.stocks</span>, col<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<p><img src="my-vignette_files/figure-html/fig4-1.png" width="576"></p>
 </div>
   </div>
 

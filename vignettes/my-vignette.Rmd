@@ -77,7 +77,8 @@ modelObject<-Porous(ky=0.8, ko=0.00605,
                     phi_min=1,
                     clay=0.2,
                     Delta_z_min=20,
-                    gamma_o=1.2)
+                    gamma_o=1.2,
+                    f_agg=3)
 
 ```
 Many values can be omitted, and the function will use the defaults. In particular `f_text_mic `, if omitted, will be calculated internally with a specific function, `f_text_mic_func()`.
@@ -88,7 +89,7 @@ Many values can be omitted, and the function will use the defaults. In particula
 plotPoolGraph(modelObject)
 ```
 
-Now we can run the model, for wich we need to initialize the starting values
+Now we can run the model, for which we need to initialize the starting values
 ```{r}
 init<-c(My_mes=1, Mo_mes=10,My_mic=0.6, Mo_mic=3)
 times<-seq(0,20,by=0.1)
@@ -150,7 +151,7 @@ gamma_b(My_mic=Stocks[1:20,1],
 All the above functions can be run with a wrapper, `run_Porous`, that takes care of running the simulation and calculating bulk density, C concentration and layer thickness evolution:
 
 ```{r}
-results<-run_Porous(ky=0.8, ko=0.04,
+simulation<-run_Porous(ky=0.8, ko=0.04,
                      kmix=0.02,
                      e=0.15,
                      Im=0.08, Ir=0.048,
@@ -168,9 +169,14 @@ results<-run_Porous(ky=0.8, ko=0.04,
                      sim_length=20,
                      sim_steps=0.1)
 
+simulation$`mass balance`
+
+results<-simulation$results
+
 head(results)
 ```
-The wrapper first runs a C stocks simulation (including with variable layer thickness calculation) and then it uses the C stocks from the simulation to calculate again the layer thickness and calculate for the first time SOC concentration and soil bulk density to include these variables in the results. This is done because it is not possible (or I do not know the way) to export the internal calculations from the SoilR model.
+The wrapper first runs a C stocks simulation (including with variable layer thickness calculation) and then it uses the C stocks from the simulation to calculate again the layer thickness and calculate for the first time SOC concentration and soil bulk density to include these variables in the results. This is done because it is not possible (or I do not know the way) to export the internal calculations from the SoilR model.  
+Please notice that the above code is overriding the `f_text_mic` calculation.
 
 
 Results can be accessed as plotted as a data frame:  
@@ -191,7 +197,39 @@ plot(results$time, results$f_som_sim,  type="l", col=7, xlab="Years", ylab="C co
 plot(results$time, results$Delta_z_sim,  type="l", col=5, xlab="Years", ylab="Delta Z (cm)")
 ```
 
-A diagnostic function to check the mass balance of the model (sed for development) is also available:
+  
+The package contains an alternative implementation of the same model, directly written around the `deSolve` package (but wrapped to have the same syntax). The following is an example of a model run at equilibrium (so the pools are supposed to be flat):
+
 ```{r}
-mass_balance(results,   Im=0.08, Ir=0.048,  sim_length=100, sim_steps=0.1)
+simulation_deSolve<-run_Porous_deSolve(ky=0.8, ko=0.04,
+                                        kmix=0.02,
+                                        e=0.15,
+                                        Im=0.08, Ir=0.048,
+                                        F_prot=0.1,
+                                        phi_mac=0.04,
+                                        clay=0.2,
+                                        Delta_z_min=14.2,
+                                        gamma_o=1.2,
+                                        gamma_m=2.7,
+                                        proportion=NULL,
+                                        phi_min=0.35,
+                                        f_text_mic=0.5069,
+                                        f_agg=3,
+                                        init=c(My_mes=0.132, Mo_mes=0.507, My_mic=0.284, Mo_mic=0.579),
+                                        sim_length=30,
+                                       sim_steps=0.1)
+
+results_deSolve<-simulation_deSolve$results
+
+head(results_deSolve)
+```
+
+
+
+```{r fig4, dpi = 72, fig.height = 5, fig.width = 8}
+range_stocks<-range(results_deSolve[,2:5])
+plot(results_deSolve$time, results_deSolve$My_mes.stocks, ylim=c(-2,range_stocks[2]), type="l", col=1)
+lines(results_deSolve$time, results_deSolve$Mo_mes.stocks, col=2)
+lines(results_deSolve$time, results_deSolve$My_mic.stocks, col=3)
+lines(results_deSolve$time, results_deSolve$Mo_mic.stocks, col=4)
 ```

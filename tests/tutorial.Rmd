@@ -1,0 +1,160 @@
+---
+title: "Tutorial"
+author: "Lorenzo Menichetti"
+date: "2023-05-05"
+output:
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# defining common parameters
+```{r}
+
+library(SoilR)
+#inputs
+Iy_value=1.1
+Io_value=0.5
+#init and timesteps
+iv<-c(Cy=1, Co=10)
+duration=20
+time_step=0.1
+```
+
+# Testing the ICBM model for mass balance
+
+## Running the predefined ICBM model
+```{r}
+
+#### ICBM
+times<-seq(0,duration,by=time_step)
+ICBM_run=ICBMModel(t=times, h=0.250, r=1.10, c0=iv, In=Iy_value+Io_value) #Manure
+Ct0<-getC(ICBM_run)
+Rt0<-getReleaseFlux(ICBM_run)
+
+
+```
+
+## Check the mass balance of the ICBM simulation
+
+```{r}
+### mass balance
+
+#SOC difference
+SOC_diff<-rowSums(Ct0)[length(times)]-rowSums(Ct0)[1]
+
+#Respiration (cumulated)
+RESP_tot<-sum(rowSums(Rt0*time_step)[-1])
+
+#Inputs total
+Input_tot<-sum(rep(1.1, duration)+ rep(0.5, duration))
+# check mass balance
+Input_tot==(SOC_diff+RESP_tot)
+Input_tot
+(SOC_diff+RESP_tot)
+```
+
+The mass balance is \textcolor{green}{pretty much respected}, just minor errors due probably to the solver.
+
+
+# Testing the tutorial model (nonlinearity in inputs) for mass balance
+
+## Defining the model 
+
+```{r}
+
+TwopoolNonlinearInput<-function(ky=0.8, ko=0.00605, h=0.13, Iy=Iy_value, Io=Io_value){
+  time_symbol='t'
+
+  ifs=SoilR:::InFluxList_by_PoolName(
+    c(
+      SoilR:::InFlux_by_PoolName(
+        destinationName='Cy',
+        func=function(t, Co){
+          Iy*(Co/(0.5*Co))
+        }
+      ),
+      SoilR:::InFlux_by_PoolName(
+        destinationName='Co',
+        func=function(t){
+          Io
+        }
+      )
+    )
+  )
+  ofs=SoilR:::OutFluxList_by_PoolName(
+    c(
+      SoilR:::OutFlux_by_PoolName(
+        sourceName='Cy',
+        func=function(Cy){
+          ky*Cy
+        }
+      )
+      ,
+      SoilR:::OutFlux_by_PoolName(
+        sourceName='Co',
+        func=function(Co){
+          ko*Co
+        }
+      )
+    )
+  )
+  intfs=SoilR:::InternalFluxList_by_PoolName(
+    list(
+      SoilR:::InternalFlux_by_PoolName(
+        sourceName='Cy',
+        destinationName='Co',
+        func=function(Cy){
+          h*ky*Cy
+        }
+      )
+    )
+  )
+
+  smod <- SoilR:::SymbolicModel_by_PoolNames(
+    in_fluxes=ifs,
+    internal_fluxes=intfs,
+    out_fluxes=ofs,
+    timeSymbol=time_symbol
+  )
+  smod
+}
+```
+
+## Running the model
+```{r}
+
+modelObject<-TwopoolNonlinearInput()
+modrun0<-Model_by_PoolNames(smod=modelObject, times=times, initialValues=iv)
+Ct0<-getC(modrun0)
+Rt0<-getReleaseFlux(modrun0)
+
+# plot(rowSums(Ct0), type="l")
+# plot(rowSums(Rt0), type="l")
+```
+
+## Checking the mass balance
+```{r}
+
+### mass balance
+
+#SOC difference
+SOC_diff<-rowSums(Ct0)[length(times)]-rowSums(Ct0)[1]
+
+#Respiration (cumulated)
+RESP_tot<-sum(rowSums(Rt0*time_step))
+
+#Inputs total
+Input_tot<-sum(rep(1.1, duration)+ rep(0.5, duration))
+
+# check mass balance
+Input_tot==(SOC_diff+RESP_tot)
+
+Input_tot
+(SOC_diff+RESP_tot)
+
+```
+
+The mass balance is \textcolor{red}{not respected}, something weird is happening with this model.

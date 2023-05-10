@@ -260,26 +260,47 @@ f_som<-function(My_mic, Mo_mic, My_mes, Mo_mes,
 #' @return a data frame with the simulation of C stocks for each of the four pools, soil respiration for each of the four pools, bulk density variation and SOC concentration.
 #' @seealso \code{\link{Porous}}, \code{\link{gamma_b}}, \code{\link{f_som}}
 #' @export
-run_Porous<-function(ky=0.8,
-                     ko=0.04,
-                     kmix=0.02,
-                     e=0.15,
-                     Im=0.08,
-                     Ir=0.048,
-                     F_prot=0.1,
-                     phi_mac=0.04,
-                     phi_min=0.35,
-                     clay=0.2,
-                     Delta_z_min=14.2,
-                     gamma_o=1.2,
-                     gamma_m=2.7,
+run_Porous<-function(ky,
+                     ko,
+                     kmix,
+                     e,
+                     Im,
+                     Ir,
+                     F_prot,
+                     phi_mac,
+                     phi_min,
+                     clay,
+                     Delta_z_min,
+                     gamma_o,
+                     gamma_m,
                      proportion=NULL,
                      f_text_mic=NULL,
-                     f_agg=3,
+                     f_agg,
                      init,
                      sim_length,
                      sim_steps
 ){
+
+  # run_Porous<-function(ky=0.8,
+  #                      ko=0.04,
+  #                      kmix=0.02,
+  #                      e=0.15,
+  #                      Im=0.08,
+  #                      Ir=0.048,
+  #                      F_prot=0.1,
+  #                      phi_mac=0.04,
+  #                      phi_min=0.35,
+  #                      clay=0.2,
+  #                      Delta_z_min=14.2,
+  #                      gamma_o=1.2,
+  #                      gamma_m=2.7,
+  #                      proportion=NULL,
+  #                      f_text_mic=NULL,
+  #                      f_agg=3,
+  #                      init,
+  #                      sim_length,
+  #                      sim_steps
+  # ){
 
   modelObject<-Porous(ky, ko,
                       kmix,
@@ -290,7 +311,9 @@ run_Porous<-function(ky=0.8,
                       phi_min,
                       clay,
                       Delta_z_min,
-                      gamma_o)
+                      gamma_o,
+                      f_agg,
+                      proportion)
 
 
 
@@ -331,56 +354,29 @@ run_Porous<-function(ky=0.8,
                phi_mac,
                gamma_o)
 
+  ### Mass balance check
+  #SOC difference
+  SOC_diff<-rowSums(Stocks)[length(times)]-rowSums(Stocks)[1]
 
-  # results<-data.frame(Stocks[,"My_mes stocks"],
-  #                       Stocks[,"Mo_mes stocks"],
-  #                       Stocks[,"My_mic stocks"],
-  #                       Stocks[,"Mo_mic stocks"],
-  #                       Resp[,"My_mes resp"],
-  #                       Resp[,"Mo_mes resp"],
-  #                       Resp[,"My_mic resp"],
-  #                       Resp[,"Mo_mic resp"], f_som_sim, gamma_b_sim) #create the data frame with the results
+  #Respiration (cumulated)
+  RESP_tot<-sum(rowSums(Resp*sim_steps)[-1]) #removing the first respiration
+
+  #Inputs total
+  Input_total<-sum(rep(Im, sim_length)+ rep(Ir, sim_length))
+  # check mass balance
+  Simulated_total=(SOC_diff+RESP_tot)
+
+  mass_balance=c(Input_total, Simulated_total)
+
+  convergence=all.equal(mass_balance[1], mass_balance[2])
+
+
   results<-data.frame(time=times, Stocks,
                       Resp, f_som_sim, gamma_b_sim, Delta_z_sim) #create the data frame with the results
 
-    return(results)
 
-}
+    return(list(results=results, "mass balance"=mass_balance, "mass balance convergence"=convergence))
 
-
-
-
-
-#' Mass balance check
-#'
-#' @description This function calculates the mass balance between the C fluxes and stock change and the inputs. It is used mainly as a diagnostic for model development.
-#' @param results results as from the function  \code{\link{run_Porous}}
-#' @inheritParams run_Porous
-#' @return one single value
-#' @seealso \code{\link{Msm}}
-#' @export
-mass_balance<-function(results,
-                Im,
-                Ir,
-                sim_length,
-                sim_steps
-                ){
-
-  cumulated_stocks<-results$My_mes.stocks+results$Mo_mes.stocks+
-    results$My_mic.stocks+results$Mo_mic.stocks
-
-  cumulated_resp<-(results$My_mes.resp+results$Mo_mes.resp+
-                  results$My_mic.resp+results$Mo_mic.resp)*sim_steps
-
-  mass_soil<-cumulated_stocks[length(cumulated_stocks)]-cumulated_stocks[1]+
-    sum(cumulated_resp)
-
-  mass_inputs<-sum(c(rep(Im, (sim_length)),
-                     rep(Ir, (sim_length))))
-
-  check_result<-mass_soil==mass_inputs
-
-  return(list("C balance soil"=mass_soil, "C balance inputs"=mass_inputs, "mass balance"=check_result))
 }
 
 
