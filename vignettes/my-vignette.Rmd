@@ -197,7 +197,9 @@ plot(results$time, results$f_som_sim,  type="l", col=7, xlab="Years", ylab="C co
 plot(results$time, results$Delta_z_sim,  type="l", col=5, xlab="Years", ylab="Delta Z (cm)")
 ```
 
-  
+
+## Example: how to to run the model  (written directly with a deSolve wrapper)
+
 The package contains an alternative implementation of the same model, directly written around the `deSolve` package (but wrapped to have the same syntax). The following is an example of a model run at equilibrium (so the pools are supposed to be flat):
 
 ```{r}

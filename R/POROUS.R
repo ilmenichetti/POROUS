@@ -1,6 +1,7 @@
-#' The SOC decomposition model
+#' The SOC decomposition model **STILL TESTING; NOT YET WORKING, use the deSolve function instead**
 #'
-#' This function implements with the SoilR model development framework the dual porosity model described in Meurer et al. (2020).
+#' This function implements with the SoilR model development framework the dual porosity model described in Meurer et al. (2020). THis function provides just the model definition, that needs then to be run with specific SoilR functions.
+#' A more comfortable wrapper for doing this automatically is provided in the package (\code{\link{run_Porous}}).
 #' The model is an evolution of a two-pool linear SOC model, with two pools (young and old material) running in parallel for micro- and mesopores.
 #' While aboveground inputs are rooted in the mesopores, root inputs are distributed between micro and mesopores depending on porosity, which is in turn influenced by organic matter. This makes the model nonlinear, although it still behaves similarly to a linear model within a reasonable calibration range. The model is described by a series of four equations: \cr
 #' \cr
@@ -10,13 +11,13 @@
 #' \eqn{ \frac{dM_{O_{(mic)}}}{dt} = \left( \epsilon \cdot k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot F_{prot} \cdot M_{O_{(mes)}} \right) - T_O } \cr
 #'  \cr
 #' Please refer to the original paper for more details.  \cr
-#'  The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2 disappeared and are now calculaged as
-#'  \eqn{T_Y = k_{mix} \cdot (My_{mic}-My_{mes})} and \eqn{T_O = k_{mix} \cdot (Mo_{mic}-Mo_{mes})}. \cr
-#'  \cr
+#' The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2 disappeared and are now calculaged as
+#' \eqn{T_Y = k_{mix} \cdot (My_{mic}-My_{mes})} and \eqn{T_O = k_{mix} \cdot (Mo_{mic}-Mo_{mes})}. \cr
+#' \cr
 #' The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})} and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
 #' After substituting the terms \eqn{\left( \frac{\phi_{mes}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mes}} and \eqn{\left( \frac{\phi_{mic}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mic}},
 #' The model can be rewritten in matrix form as :  \cr
-#'  \cr
+#' \cr
 #' \eqn{I_m(t) + I_r(t) \cdot N(C,t) + A(t) \cdot P(t) \cdot C(t)} \cr
 # THE FOLLOWING EQUATION IS COMMENTED BECAUSE IT GAVE ERROR...
 # Or, more explicitly:  \cr
@@ -27,8 +28,9 @@
 #    \begin{bmatrix} -k_y & \epsilon & 0 & 0\\ 0 & -k_o & 0 & 0\\ T_Y & 0 & -k_y & \epsilon\\ 0 & T_O & 0 & -k_o\\ \end{bmatrix} \cdot
 #    \begin{bmatrix} 1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 0 & 0 & F_{prot} & 0\\ 0 & 0 & 0 & F_{prot}\\ \end{bmatrix} \cdot
 #    \begin{bmatrix} M_{Y_{mes}}\\ M_{O_{mes}}\\ M_{Y_{mic}}\\ M_{O_{mic}} \end{bmatrix}
-#         } \cr
-#' The model is implemented with the \code{SoilR} package, but it is relying on a more conventional ODE definition (not its matrix form).
+#         }
+#' \cr
+#' The model is implemented with the \code{SoilR} package but it is relying on a more conventional ODE definition (not its matrix form).
 #'
 #' @param ky decomposition constant of the Young pool \eqn{frac{1}{year}}
 #' @param ko decomposition constant of the Old pool \eqn{frac{1}{year}}
@@ -191,6 +193,118 @@ Porous<-function(ky,
   )
   smod
 }
+
+
+
+#' Run Porous **STILL TESTING; NOT YET WORKING, use the deSolve function instead**
+#'
+#' @description This function is a wrapper for running the main model \code{\link{Porous}}, which is a wrapper for the dual porosity decomposition model (equations 1 to 6) described in Meurer et al. (2020) implemented in  `SoilR`.
+#' It then feeds the simulated SOC stocks to the functions \code{\link{gamma_b}} and \code{\link{f_som}} to calculate the variation of bulk density and C concentrations
+#' @inheritParams Porous
+#' @param init initialization of the four pools. This must be a vector with the names of the four pools in sequence in the format: `c(My_mes=1, Mo_mes=10,My_mic=0.6, Mo_mic=3)`. Units are generally in  (\eqn{g cm^{-2} year^{-1}), but in any case they should match the units of the inputs.
+#' @param sim_lenght length of the simulation (years)
+#' @param sim_steps steps of the simulation (fraction of one year)
+#' @return a data frame with the simulation of C stocks for each of the four pools, soil respiration for each of the four pools, bulk density variation and SOC concentration.
+#' @seealso \code{\link{Porous}}, \code{\link{gamma_b}}, \code{\link{f_som}}
+#' @export
+run_Porous<-function(ky,
+                     ko,
+                     kmix,
+                     e,
+                     Im,
+                     Ir,
+                     F_prot,
+                     phi_mac,
+                     phi_min,
+                     clay,
+                     Delta_z_min,
+                     gamma_o,
+                     gamma_m,
+                     proportion=NULL,
+                     f_text_mic=NULL,
+                     f_agg,
+                     init,
+                     sim_length,
+                     sim_steps
+){
+
+  modelObject<-Porous(ky, ko,
+                      kmix,
+                      e,
+                      Im, Ir,
+                      F_prot,
+                      phi_mac,
+                      phi_min,
+                      clay,
+                      Delta_z_min,
+                      gamma_o,
+                      f_agg,
+                      proportion)
+
+
+
+  times<-seq(0,sim_length,by=sim_steps)
+
+  modrun0<-Model_by_PoolNames(smod=modelObject, times=times, initialValues=init)
+
+  Stocks<-getC(modrun0)
+  Resp<-getReleaseFlux(modrun0)
+  colnames(Stocks)=c("My_mes stocks", "Mo_mes stocks", "My_mic stocks", "Mo_mic stocks")
+  colnames(Resp)=c("My_mes resp", "Mo_mes resp", "My_mic resp", "Mo_mic resp")
+
+  f_som_sim<-f_som(My_mic=Stocks[,1],
+                   Mo_mic=Stocks[,2],
+                   My_mes=Stocks[,3],
+                   Mo_mes=Stocks[,4],
+                   Delta_z_min,
+                   phi_min,
+                   gamma_m)
+
+  gamma_b_sim<-gamma_b(My_mic=Stocks[,1],
+                       Mo_mic=Stocks[,2],
+                       My_mes=Stocks[,3],
+                       Mo_mes=Stocks[,4],
+                       Delta_z_min,
+                       phi_min,
+                       gamma_o,
+                       gamma_m,
+                       f_agg,
+                       phi_mac)
+
+  Delta_z_sim<-Delta_z(f_agg=f_agg,
+                       Delta_z_min=Delta_z_min,
+                       My_mic=Stocks[,1],
+                       Mo_mic=Stocks[,2],
+                       My_mes=Stocks[,3],
+                       Mo_mes=Stocks[,4],
+                       phi_mac,
+                       gamma_o)
+
+  ### Mass balance check
+  #SOC difference
+  SOC_diff<-rowSums(Stocks)[length(times)]-rowSums(Stocks)[1]
+
+  #Respiration (cumulated)
+  RESP_tot<-sum(rowSums(Resp*sim_steps)[-1]) #removing the first respiration
+
+  #Inputs total
+  Input_total<-sum(rep(Im, sim_length)+ rep(Ir, sim_length))
+  # check mass balance
+  Simulated_total=(SOC_diff+RESP_tot)
+
+  mass_balance=c(Input_total, Simulated_total)
+
+  convergence=all.equal(mass_balance[1], mass_balance[2])
+
+
+  results<-data.frame(time=times, Stocks,
+                      Resp, f_som_sim, gamma_b_sim, Delta_z_sim) #create the data frame with the results
+
+
+  return(list(results=results, "mass balance"=mass_balance, "mass balance convergence"=convergence))
+
+}
+
 
 
 

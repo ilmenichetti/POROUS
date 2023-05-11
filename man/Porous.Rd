@@ -2,7 +2,7 @@
 % Please edit documentation in R/POROUS.R
 \name{Porous}
 \alias{Porous}
-\title{The SOC decomposition model}
+\title{The SOC decomposition model **STILL TESTING; NOT YET WORKING, use the deSolve function instead**}
 \usage{
 Porous(
   ky,
@@ -49,7 +49,8 @@ Porous(
 two values, the proportion (between 0 and 1) of input in the mesopore and micropore Y pools
 }
 \description{
-This function implements with the SoilR model development framework the dual porosity model described in Meurer et al. (2020).
+This function implements with the SoilR model development framework the dual porosity model described in Meurer et al. (2020). THis function provides just the model definition, that needs then to be run with specific SoilR functions.
+A more comfortable wrapper for doing this automatically is provided in the package (\code{\link{run_Porous}}).
 The model is an evolution of a two-pool linear SOC model, with two pools (young and old material) running in parallel for micro- and mesopores.
 While aboveground inputs are rooted in the mesopores, root inputs are distributed between micro and mesopores depending on porosity, which is in turn influenced by organic matter. This makes the model nonlinear, although it still behaves similarly to a linear model within a reasonable calibration range. The model is described by a series of four equations: \cr
 \cr
@@ -59,15 +60,16 @@ While aboveground inputs are rooted in the mesopores, root inputs are distribute
 \eqn{ \frac{dM_{O_{(mic)}}}{dt} = \left( \epsilon \cdot k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot F_{prot} \cdot M_{O_{(mes)}} \right) - T_O } \cr
  \cr
 Please refer to the original paper for more details.  \cr
- The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2 disappeared and are now calculaged as
- \eqn{T_Y = k_{mix} \cdot (My_{mic}-My_{mes})} and \eqn{T_O = k_{mix} \cdot (Mo_{mic}-Mo_{mes})}. \cr
- \cr
+The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2 disappeared and are now calculaged as
+\eqn{T_Y = k_{mix} \cdot (My_{mic}-My_{mes})} and \eqn{T_O = k_{mix} \cdot (Mo_{mic}-Mo_{mes})}. \cr
+\cr
 The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})} and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
 After substituting the terms \eqn{\left( \frac{\phi_{mes}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mes}} and \eqn{\left( \frac{\phi_{mic}(t)}{\phi_{mes}(t)+\phi_{mic}(t)}\right) = \varphi_{mic}},
 The model can be rewritten in matrix form as :  \cr
- \cr
+\cr
 \eqn{I_m(t) + I_r(t) \cdot N(C,t) + A(t) \cdot P(t) \cdot C(t)} \cr
-The model is implemented with the \code{SoilR} package, but it is relying on a more conventional ODE definition (not its matrix form).
+\cr
+The model is implemented with the \code{SoilR} package but it is relying on a more conventional ODE definition (not its matrix form).
 }
 \references{
 Meurer, Katharina Hildegard Elisabeth, Claire Chenu, Elsa Coucheney, Anke Marianne Herrmann, Thomas Keller, Thomas Kätterer, David Nimblad Svensson, and Nicholas Jarvis. “Modelling Dynamic Interactions between Soil Structure and the Storage and Turnover of Soil Organic Matter.” Biogeosciences 17, no. 20 (October 19, 2020): 5025–42. https://doi.org/10.5194/bg-17-5025-2020. \cr
