@@ -1,22 +1,46 @@
-#' The SOC decomposition model implemented as an system of differential equations with the \code{deSolve} package.
+#' The SOC decomposition model implemented as an system of differential equations 
+#' with the \code{deSolve} package.
 #'
-#' This function implements the dual porosity model described in Meurer et al. (2020). The model is the same as in  \code{\link{run_Porous}} and  \code{\link{Porous}} but it is implemented differently, directly as a wrapper of the system of equations within the \code{deSolve} package.
-#' This implementation was designed during the development of the package, as a more transparent way of running the model and check for errors, but it does run correctly and is perfectly usable. This command relies on the same functions than \code{\link{Porous}} to calculate the partitioning of the inputs between meso- and micropores.
-#' This version currently do not provide separately the respiration fluxes but only the soil C stocks.
+#' This function implements the dual porosity model described in
+#'  Meurer et al. (2020). The model is the same as in  \code{\link{run_Porous}} 
+#' and  \code{\link{Porous}} but it is implemented differently, directly as
+#'  a wrapper of the system of equations within the \code{deSolve} package.
+#' This implementation was designed during the development of the package, 
+#' as a more transparent way of running the model and check for errors, but
+#'  it does run correctly and is perfectly usable. This command relies on 
+#' the same functions than \code{\link{Porous}} to calculate the partitioning 
+#' of the inputs between meso- and micropores.
+#' This version currently do not provide separately the respiration fluxes 
+#' but only the soil C stocks.
 #'
-#' The model is an evolution of a two-pool linear SOC model, with two pools (young and old material) running in parallel for micro- and mesopores.
-#' While aboveground inputs are rooted in the mesopores, root inputs are distributed between micro and mesopores depending on porosity, which is in turn influenced by organic matter. This makes the model nonlinear, although it still behaves similarly to a linear model within a reasonable calibration range. The model is described by a series of four equations: \cr
+#' The model is an evolution of a two-pool linear SOC model, with two pools 
+#' (young and old material) running in parallel for micro- and mesopores.
+#' While aboveground inputs are rooted in the mesopores, root inputs are 
+#' distributed between micro and mesopores depending on porosity, which is
+#'  in turn influenced by organic matter. This makes the model nonlinear, 
+#' although it still behaves similarly to a linear model within a 
+#' reasonable calibration range. The model is described by a series of
+#'  four equations: \cr
 #' \cr
-#' \eqn{\frac{dM_{Y_{(mes)}}}{dt} = I_m + \left( \frac{\phi_{mes}}{\phi_{mes}+\phi_{mic}}\right) \cdot I_r - k_Y \cdot M_{Y_{(mes)}}+ T_Y } \cr
-#' \eqn{ \frac{dM_{O_{(mes)}}}{dt} = \left( \epsilon \cdot k_Y \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot M_{O_{(mes)}} \right) + T_O} \cr
-#' \eqn{ \frac{dM_{Y_{(mic)}}}{dt} = \left( \frac{\phi_{mic}}{\phi_{mes}+\phi_{mic}}\right) \cdot I_r - k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}}- T_Y } \cr
-#' \eqn{ \frac{dM_{O_{(mic)}}}{dt} = \left( \epsilon \cdot k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot F_{prot} \cdot M_{O_{(mes)}} \right) - T_O } \cr
+#' \eqn{\frac{dM_{Y_{(mes)}}}{dt} = I_m + \left( \frac{\phi_{mes}}
+#' {\phi_{mes}+\phi_{mic}}\right) \cdot I_r - k_Y \cdot M_{Y_{(mes)}}+ T_Y } \cr
+#' \eqn{ \frac{dM_{O_{(mes)}}}{dt} = \left( \epsilon \cdot k_Y \cdot M_{Y_{(mes)}} \right) - 
+#' \left( (1- \epsilon) \cdot k_O \cdot M_{O_{(mes)}} \right) + T_O} \cr
+#' \eqn{ \frac{dM_{Y_{(mic)}}}{dt} = \left( \frac{\phi_{mic}}{\phi_{mes}+\phi_{mic}}\right) 
+#' \cdot I_r - k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}}- T_Y } \cr
+#' \eqn{ \frac{dM_{O_{(mic)}}}{dt} = \left( \epsilon \cdot k_Y \cdot F_{prot} 
+#' \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot F_{prot} \cdot M_{O_{(mes)}} \right) - T_O } \cr
 #'  \cr
 #' Please refer to the original paper for more details.  \cr
-#'  The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2 disappeared and are now calculaged as
+#'  The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as 
+#'  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot 
+#' \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2
+#'  disappeared and are now calculaged as
 #'  \eqn{T_Y = k_{mix} \cdot (My_{mic}-My_{mes})} and \eqn{T_O = k_{mix} \cdot (Mo_{mic}-Mo_{mes})}. \cr
 #'  \cr
-#' The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})} and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
+#' The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})}
+#'  and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different
+#'  C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
 #'
 #'
 #' @param ky decomposition constant of the Young pool \eqn{frac{1}{year}}
@@ -27,6 +51,7 @@
 #' @param Ir Inputs from roots, which is partitioned between micropore and mesopores with the function \code{\link{pore_frac}}. Units are generally in (\eqn{g cm^{-2} year^{-1}), but in any case they should match the units of the initialization.
 #' @param F_prot protection provided by the micropore space (dimensionless)
 #' @param proportion this is a linearization term to make the proportion of the inputs between micro- and mesopores constant. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)
+#' @param constant boolean, if TRUE then the solver run in constant input mode, otherwise in variable input mode. Default is FALSE.
 #' @inheritParams pore_frac
 #' @inheritParams Delta_z
 #' @inheritParams f_text_mic_func
@@ -37,7 +62,7 @@
 #' Kätterer, Thomas, and Olof Andrén. “The ICBM Family of Analytically Solved Models of Soil Carbon, Nitrogen and Microbial Biomass Dynamics — Descriptions and Application Examples.” Ecological Modelling 136, no. 2–3 (January 2001): 191–207. https://doi.org/10.1016/S0304-3800(00)00420-8.
 #' @export
 #'
-run_Porous_deSolve<-function(ky,
+run_Porous_deSolve<-function (ky,
                      ko,
                      kmix,
                      e,
@@ -50,47 +75,59 @@ run_Porous_deSolve<-function(ky,
                      Delta_z_min,
                      gamma_o,
                      gamma_m,
-                     proportion=NULL,
-                     f_text_mic=NULL,
+                     proportion = NULL,
+                     f_text_mic = NULL,
                      f_agg,
                      init,
                      sim_length,
-                     sim_steps
-){
+                     sim_steps,
+                     constant=FALSE
+) {
 
   require(deSolve)
 
-  ##ODE Porous
-  if(is.null(proportion)){
-      ODE_Porous <- function(t, state, parameters) {
-        with(as.list(c(state, parameters)), { #if cycle for inputs going to My_mes, if linear or not. If "proportion" is missing then nonlinear
-
-          proportion=pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[1]
-
-          .My_mes = Im + proportion*Ir-ky*My_mes + kmix*(My_mic-My_mes)
-          .Mo_mes = e*ky*My_mes - (1-e)*ko*Mo_mes +  kmix*(Mo_mic-Mo_mes)
-          .My_mic = (1-proportion)*Ir - ky*F_prot*My_mic -  kmix*(My_mic-My_mes)
-          .Mo_mic = e*ky*F_prot*My_mic - (1-e)*ko*F_prot*Mo_mic - kmix*(Mo_mic-Mo_mes)
+if(constant==F){
+Im_fun <- approxfun(Im, rule = 2)
+Ir_fun <- approxfun(Ir, rule = 2)
 
 
-          return(list(c(.My_mes, .Mo_mes, .My_mic, .Mo_mic)))
-        })
-      }
-  } else{ #... else use the proportion supplied by the user
-    ODE_Porous <- function(t, state, parameters) {
-      with(as.list(c(state, parameters)), {
+##ODE Porous
+ODE_Porous <- function(t, state, parameters) {
+  with(as.list(c(state, parameters)), {
+    if (is.null(proportion)) {
+      proportion <- pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[1]
+    }
+    Im=Im_fun(t)
+    Ir=Ir_fun(t)
 
-        .My_mes = Im + proportion*Ir-ky*My_mes + kmix*(My_mic-My_mes)
-        .Mo_mes = e*ky*My_mes - (1-e)*ko*Mo_mes +  kmix*(Mo_mic-Mo_mes)
-        .My_mic = (1-proportion)*Ir - ky*F_prot*My_mic -  kmix*(My_mic-My_mes)
-        .Mo_mic = e*ky*F_prot*My_mic - (1-e)*ko*F_prot*Mo_mic - kmix*(Mo_mic-Mo_mes)
+    .My_mes <- Im + proportion * Ir - ky * My_mes + kmix * (My_mic - My_mes)
+    .Mo_mes <- e * ky * My_mes - (1 - e) * ko * Mo_mes + kmix * (Mo_mic - Mo_mes)
+    .My_mic <- (1 - proportion) * Ir - ky * F_prot * My_mic - kmix * (My_mic - My_mes)
+    .Mo_mic <- e * ky * F_prot * My_mic - (1 - e) * ko * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
 
-
-        return(list(c(.My_mes, .Mo_mes, .My_mic, .Mo_mic)))
-      })
+    return(list(c(.My_mes, .Mo_mes, .My_mic, .Mo_mic)))
+  })
+}
+} else {
+##ODE Porous
+ODE_Porous <- function(t, state, parameters) {
+  with(as.list(c(state, parameters)), {
+    if (is.null(proportion)) {
+      proportion <- pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[1]
     }
 
-  }
+    .My_mes <- Im + proportion * Ir - ky * My_mes + kmix * (My_mic - My_mes)
+    .Mo_mes <- e * ky * My_mes - (1 - e) * ko * Mo_mes + kmix * (Mo_mic - Mo_mes)
+    .My_mic <- (1 - proportion) * Ir - ky * F_prot * My_mic - kmix * (My_mic - My_mes)
+    .Mo_mic <- e * ky * F_prot * My_mic - (1 - e) * ko * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
+
+    return(list(c(.My_mes, .Mo_mes, .My_mic, .Mo_mic)))
+  })
+}
+
+}
+
+
 
 
   parameters=c(ky, ko,

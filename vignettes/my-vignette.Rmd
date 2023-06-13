@@ -219,7 +219,8 @@ simulation_deSolve<-run_Porous_deSolve(ky=0.8, ko=0.04,
                                         f_agg=3,
                                         init=c(My_mes=0.132, Mo_mes=0.507, My_mic=0.284, Mo_mic=0.579),
                                         sim_length=30,
-                                       sim_steps=0.1)
+                                        sim_steps=0.1, 
+                                        constant=T)
 
 results_deSolve<-simulation_deSolve$results
 
@@ -229,6 +230,50 @@ head(results_deSolve)
 
 
 ```{r fig4, dpi = 72, fig.height = 5, fig.width = 8}
+range_stocks<-range(results_deSolve[,2:5])
+plot(results_deSolve$time, results_deSolve$My_mes.stocks, ylim=c(-2,range_stocks[2]), type="l", col=1)
+lines(results_deSolve$time, results_deSolve$Mo_mes.stocks, col=2)
+lines(results_deSolve$time, results_deSolve$My_mic.stocks, col=3)
+lines(results_deSolve$time, results_deSolve$Mo_mic.stocks, col=4)
+```
+
+
+You should pay attention to the option `constant`, default is `FALSE`. When `TRUE` the solver runs in a version for constant inputs, when `FALSE` the solver run instead assuming that `inputs` are a vector of the same length than `sim_length` and it makes it a continuous function with the R base function `approxfun` which is then caller inside the ODE given to the solver.
+
+
+
+
+```{r}
+
+sim_length=30
+
+simulation_deSolve<-run_Porous_deSolve(ky=0.8, ko=0.04,
+                                        kmix=0.02,
+                                        e=0.15,
+                                        Im=rep(0.08, sim_length), Ir=rep(0.048, sim_length),
+                                        F_prot=0.1,
+                                        phi_mac=0.04,
+                                        clay=0.2,
+                                        Delta_z_min=14.2,
+                                        gamma_o=1.2,
+                                        gamma_m=2.7,
+                                        proportion=NULL,
+                                        phi_min=0.35,
+                                        f_text_mic=0.5069,
+                                        f_agg=3,
+                                        init=c(My_mes=0.132, Mo_mes=0.507, My_mic=0.284, Mo_mic=0.579),
+                                        sim_length=sim_length,
+                                        sim_steps=0.1, 
+                                       constant=F)
+
+results_deSolve<-simulation_deSolve$results
+
+head(results_deSolve)
+```
+
+Results are in this case the same since we are just repeating the same inputs as a constant vector over the whole simulation, but that vector now can be variable.
+
+```{r fig5, dpi = 72, fig.height = 5, fig.width = 8}
 range_stocks<-range(results_deSolve[,2:5])
 plot(results_deSolve$time, results_deSolve$My_mes.stocks, ylim=c(-2,range_stocks[2]), type="l", col=1)
 lines(results_deSolve$time, results_deSolve$Mo_mes.stocks, col=2)

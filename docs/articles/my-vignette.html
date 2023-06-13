@@ -85,8 +85,8 @@
 <p>This poorly written vignette contains some working example of how to
 run the model in its current state.<br>
 The code is organized in a series of functions:</p>
-<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-9471c3e711dc07407f56" style="width:672px;height:288px;"></div>
-<script type="application/json" data-for="htmlwidget-9471c3e711dc07407f56">{"x":{"diagram":"digraph {\n\ngraph [layout = dot, rankdir = LR]\n# define the global styles of the nodes. We can override these in box if we wish\nnode [shape = rectangle, style = filled, fillcolor = Linen]\n\nDelta_z [label =  \"Delta_z function\", fillcolor = cornflowerblue]\nphi_mat [label = \"phi_mat function\", fillcolor = darkseagreen3]\nphi_mic [label = \"phi_mic function\", fillcolor = bisque2]\nf_text_mic_func [label = \"f_text_mic_func function\", fillcolor = mediumpurple1]\nPorous [label = \"Porous function\", fillcolor = darkorange]\npore_frac [label= \"pore_frac function\", fillcolor = goldenrod2]\nMsc [label= \"Msc function\", fillcolor = yellowgreen]\nf_som [label= \"f_som function\", fillcolor = hotpink]\ngamma_b [label= \"gamma_b function\", fillcolor = seagreen2]\nrun_Porous [label= \"run_Porous function\", fillcolor = peachpuff]\nDelta_z_2 [label =  \"Delta_z function, outside run\", fillcolor = cornflowerblue]\n\n# edge definitions with the node IDs\nDelta_z -> phi_mat -> pore_frac\nDelta_z -> phi_mic -> pore_frac\nf_text_mic_func -> phi_mic\npore_frac -> Porous\nPorous -> run_Porous\nMsc -> f_som -> run_Porous\nMsc -> gamma_b -> run_Porous\nPorous -> Delta_z_2 -> run_Porous\n\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
+<div class="grViz html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-ff602972a6bf691b6ed4" style="width:672px;height:288px;"></div>
+<script type="application/json" data-for="htmlwidget-ff602972a6bf691b6ed4">{"x":{"diagram":"digraph {\n\ngraph [layout = dot, rankdir = LR]\n# define the global styles of the nodes. We can override these in box if we wish\nnode [shape = rectangle, style = filled, fillcolor = Linen]\n\nDelta_z [label =  \"Delta_z function\", fillcolor = cornflowerblue]\nphi_mat [label = \"phi_mat function\", fillcolor = darkseagreen3]\nphi_mic [label = \"phi_mic function\", fillcolor = bisque2]\nf_text_mic_func [label = \"f_text_mic_func function\", fillcolor = mediumpurple1]\nPorous [label = \"Porous function\", fillcolor = darkorange]\npore_frac [label= \"pore_frac function\", fillcolor = goldenrod2]\nMsc [label= \"Msc function\", fillcolor = yellowgreen]\nf_som [label= \"f_som function\", fillcolor = hotpink]\ngamma_b [label= \"gamma_b function\", fillcolor = seagreen2]\nrun_Porous [label= \"run_Porous function\", fillcolor = peachpuff]\nDelta_z_2 [label =  \"Delta_z function, outside run\", fillcolor = cornflowerblue]\n\n# edge definitions with the node IDs\nDelta_z -> phi_mat -> pore_frac\nDelta_z -> phi_mic -> pore_frac\nf_text_mic_func -> phi_mic\npore_frac -> Porous\nPorous -> run_Porous\nMsc -> f_som -> run_Porous\nMsc -> gamma_b -> run_Porous\nPorous -> Delta_z_2 -> run_Porous\n\n}","config":{"engine":"dot","options":null}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div class="section level2">
 <h2 id="example-how-to-to-run-the-main-model-function-written-within-the-soilr-model-development-framework">Example: how to to run the main model function (written within the
@@ -292,7 +292,8 @@ equilibrium (so the pools are supposed to be flat):</p>
 <span>                                        f_agg<span class="op">=</span><span class="fl">3</span>,</span>
 <span>                                        init<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>My_mes<span class="op">=</span><span class="fl">0.132</span>, Mo_mes<span class="op">=</span><span class="fl">0.507</span>, My_mic<span class="op">=</span><span class="fl">0.284</span>, Mo_mic<span class="op">=</span><span class="fl">0.579</span><span class="op">)</span>,</span>
 <span>                                        sim_length<span class="op">=</span><span class="fl">30</span>,</span>
-<span>                                       sim_steps<span class="op">=</span><span class="fl">0.1</span><span class="op">)</span></span>
+<span>                                        sim_steps<span class="op">=</span><span class="fl">0.1</span>, </span>
+<span>                                        constant<span class="op">=</span><span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">results_deSolve</span><span class="op">&lt;-</span><span class="va">simulation_deSolve</span><span class="op">$</span><span class="va">results</span></span>
 <span></span>
@@ -318,6 +319,63 @@ equilibrium (so the pools are supposed to be flat):</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">My_mic.stocks</span>, col<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">Mo_mic.stocks</span>, col<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <p><img src="my-vignette_files/figure-html/fig4-1.png" width="576"></p>
+<p>You should pay attention to the option <code>constant</code>, default
+is <code>FALSE</code>. When <code>TRUE</code> the solver runs in a
+version for constant inputs, when <code>FALSE</code> the solver run
+instead assuming that <code>inputs</code> are a vector of the same
+length than <code>sim_length</code> and it makes it a continuous
+function with the R base function <code>approxfun</code> which is then
+caller inside the ODE given to the solver.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">sim_length</span><span class="op">=</span><span class="fl">30</span></span>
+<span></span>
+<span><span class="va">simulation_deSolve</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/run_Porous_deSolve.html">run_Porous_deSolve</a></span><span class="op">(</span>ky<span class="op">=</span><span class="fl">0.8</span>, ko<span class="op">=</span><span class="fl">0.04</span>,</span>
+<span>                                        kmix<span class="op">=</span><span class="fl">0.02</span>,</span>
+<span>                                        e<span class="op">=</span><span class="fl">0.15</span>,</span>
+<span>                                        Im<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.08</span>, <span class="va">sim_length</span><span class="op">)</span>, Ir<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.048</span>, <span class="va">sim_length</span><span class="op">)</span>,</span>
+<span>                                        F_prot<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span>                                        phi_mac<span class="op">=</span><span class="fl">0.04</span>,</span>
+<span>                                        clay<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span>                                        Delta_z_min<span class="op">=</span><span class="fl">14.2</span>,</span>
+<span>                                        gamma_o<span class="op">=</span><span class="fl">1.2</span>,</span>
+<span>                                        gamma_m<span class="op">=</span><span class="fl">2.7</span>,</span>
+<span>                                        proportion<span class="op">=</span><span class="cn">NULL</span>,</span>
+<span>                                        phi_min<span class="op">=</span><span class="fl">0.35</span>,</span>
+<span>                                        f_text_mic<span class="op">=</span><span class="fl">0.5069</span>,</span>
+<span>                                        f_agg<span class="op">=</span><span class="fl">3</span>,</span>
+<span>                                        init<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>My_mes<span class="op">=</span><span class="fl">0.132</span>, Mo_mes<span class="op">=</span><span class="fl">0.507</span>, My_mic<span class="op">=</span><span class="fl">0.284</span>, Mo_mic<span class="op">=</span><span class="fl">0.579</span><span class="op">)</span>,</span>
+<span>                                        sim_length<span class="op">=</span><span class="va">sim_length</span>,</span>
+<span>                                        sim_steps<span class="op">=</span><span class="fl">0.1</span>, </span>
+<span>                                       constant<span class="op">=</span><span class="cn">F</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">results_deSolve</span><span class="op">&lt;-</span><span class="va">simulation_deSolve</span><span class="op">$</span><span class="va">results</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   time My_mes.stocks Mo_mes.stocks My_mic.stocks Mo_mic.stocks  f_som_sim</span></span>
+<span><span class="co">#&gt; 1  0.0     0.1320000     0.5070000     0.2840000     0.5790000 0.05684442</span></span>
+<span><span class="co">#&gt; 2  0.1     0.1322677     0.5070058     0.2836908     0.5789998 0.05684313</span></span>
+<span><span class="co">#&gt; 3  0.2     0.1325133     0.5070146     0.2833857     0.5789992 0.05684130</span></span>
+<span><span class="co">#&gt; 4  0.3     0.1327387     0.5070262     0.2830843     0.5789982 0.05683897</span></span>
+<span><span class="co">#&gt; 5  0.4     0.1329451     0.5070404     0.2827868     0.5789970 0.05683618</span></span>
+<span><span class="co">#&gt; 6  0.5     0.1331345     0.5070568     0.2824930     0.5789954 0.05683298</span></span>
+<span><span class="co">#&gt;   gamma_b_sim Delta_z_sim</span></span>
+<span><span class="co">#&gt; 1    1.320691    20.00694</span></span>
+<span><span class="co">#&gt; 2    1.320698    20.00682</span></span>
+<span><span class="co">#&gt; 3    1.320707    20.00664</span></span>
+<span><span class="co">#&gt; 4    1.320719    20.00641</span></span>
+<span><span class="co">#&gt; 5    1.320733    20.00614</span></span>
+<span><span class="co">#&gt; 6    1.320749    20.00583</span></span></code></pre></div>
+<p>Results are in this case the same since we are just repeating the
+same inputs as a constant vector over the whole simulation, but that
+vector now can be variable.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">range_stocks</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">My_mes.stocks</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>,<span class="va">range_stocks</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"l"</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">Mo_mes.stocks</span>, col<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">My_mic.stocks</span>, col<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">results_deSolve</span><span class="op">$</span><span class="va">time</span>, <span class="va">results_deSolve</span><span class="op">$</span><span class="va">Mo_mic.stocks</span>, col<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<p><img src="my-vignette_files/figure-html/fig5-1.png" width="576"></p>
 </div>
   </div>
 

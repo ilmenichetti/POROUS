@@ -1,8 +1,16 @@
 
+
+
+
+sim_length=30
+
+
+
+
 test_pars=list(ky=0.8, ko=0.04,
                kmix=0.02,
                e=0.15,
-               Im=0.08, Ir=0.048,
+               Im=rep(0.08,sim_length), Ir=rep(0.048,sim_length),
                F_prot=0.1,
                phi_mac=0.04,
                clay=0.2,
@@ -14,7 +22,7 @@ test_pars=list(ky=0.8, ko=0.04,
                f_text_mic=0.5069,
                f_agg=3,
                init=c(My_mes=0.132, Mo_mes=0.507, My_mic=0.284, Mo_mic=0.579),
-               sim_length=30)
+               sim_length=sim_length)
 
 
 simulation_deSolve<-run_Porous_deSolve(ky=test_pars$ky, ko=test_pars$ko,
@@ -33,7 +41,8 @@ simulation_deSolve<-run_Porous_deSolve(ky=test_pars$ky, ko=test_pars$ko,
                                        f_agg=test_pars$f_agg,
                                        init=c(My_mes=as.numeric(test_pars$init[1]), Mo_mes=as.numeric(test_pars$init[2]), My_mic=as.numeric(test_pars$init[3]), Mo_mic=as.numeric(test_pars$init[4])),
                                        sim_length=test_pars$sim_length,
-                                       sim_steps=1)
+                                       sim_steps=1,
+                                       constant=F)
 
 results_deSolve<-simulation_deSolve$results
 

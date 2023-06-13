@@ -2,7 +2,8 @@
 % Please edit documentation in R/POROUS_desolve.R
 \name{run_Porous_deSolve}
 \alias{run_Porous_deSolve}
-\title{The SOC decomposition model implemented as an system of differential equations with the \code{deSolve} package.}
+\title{The SOC decomposition model implemented as an system of differential equations 
+with the \code{deSolve} package.}
 \usage{
 run_Porous_deSolve(
   ky,
@@ -23,7 +24,8 @@ run_Porous_deSolve(
   f_agg,
   init,
   sim_length,
-  sim_steps
+  sim_steps,
+  constant = FALSE
 )
 }
 \arguments{
@@ -48,29 +50,54 @@ run_Porous_deSolve(
 \item{proportion}{this is a linearization term to make the proportion of the inputs between micro- and mesopores constant. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)}
 
 \item{f_agg}{an aggregation factor (m3 pore space m-3 organic matter) defined as the slope of the linear relationship assumed between the volume of aggregation pore space \eqn{V_{agg}}, and the volume of organic matter \eqn{V_{s_o}} (dimensionless)}
+
+\item{constant}{boolean, if TRUE then the solver run in constant input mode, otherwise in variable input mode. Default is FALSE.}
 }
 \value{
 two values, the proportion (between 0 and 1) of input in the mesopore and micropore Y pools
 }
 \description{
-This function implements the dual porosity model described in Meurer et al. (2020). The model is the same as in  \code{\link{run_Porous}} and  \code{\link{Porous}} but it is implemented differently, directly as a wrapper of the system of equations within the \code{deSolve} package.
-This implementation was designed during the development of the package, as a more transparent way of running the model and check for errors, but it does run correctly and is perfectly usable. This command relies on the same functions than \code{\link{Porous}} to calculate the partitioning of the inputs between meso- and micropores.
-This version currently do not provide separately the respiration fluxes but only the soil C stocks.
+This function implements the dual porosity model described in
+ Meurer et al. (2020). The model is the same as in  \code{\link{run_Porous}} 
+and  \code{\link{Porous}} but it is implemented differently, directly as
+ a wrapper of the system of equations within the \code{deSolve} package.
+This implementation was designed during the development of the package, 
+as a more transparent way of running the model and check for errors, but
+ it does run correctly and is perfectly usable. This command relies on 
+the same functions than \code{\link{Porous}} to calculate the partitioning 
+of the inputs between meso- and micropores.
+This version currently do not provide separately the respiration fluxes 
+but only the soil C stocks.
 }
 \details{
-The model is an evolution of a two-pool linear SOC model, with two pools (young and old material) running in parallel for micro- and mesopores.
-While aboveground inputs are rooted in the mesopores, root inputs are distributed between micro and mesopores depending on porosity, which is in turn influenced by organic matter. This makes the model nonlinear, although it still behaves similarly to a linear model within a reasonable calibration range. The model is described by a series of four equations: \cr
+The model is an evolution of a two-pool linear SOC model, with two pools 
+(young and old material) running in parallel for micro- and mesopores.
+While aboveground inputs are rooted in the mesopores, root inputs are 
+distributed between micro and mesopores depending on porosity, which is
+ in turn influenced by organic matter. This makes the model nonlinear, 
+although it still behaves similarly to a linear model within a 
+reasonable calibration range. The model is described by a series of
+ four equations: \cr
 \cr
-\eqn{\frac{dM_{Y_{(mes)}}}{dt} = I_m + \left( \frac{\phi_{mes}}{\phi_{mes}+\phi_{mic}}\right) \cdot I_r - k_Y \cdot M_{Y_{(mes)}}+ T_Y } \cr
-\eqn{ \frac{dM_{O_{(mes)}}}{dt} = \left( \epsilon \cdot k_Y \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot M_{O_{(mes)}} \right) + T_O} \cr
-\eqn{ \frac{dM_{Y_{(mic)}}}{dt} = \left( \frac{\phi_{mic}}{\phi_{mes}+\phi_{mic}}\right) \cdot I_r - k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}}- T_Y } \cr
-\eqn{ \frac{dM_{O_{(mic)}}}{dt} = \left( \epsilon \cdot k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot F_{prot} \cdot M_{O_{(mes)}} \right) - T_O } \cr
+\eqn{\frac{dM_{Y_{(mes)}}}{dt} = I_m + \left( \frac{\phi_{mes}}
+{\phi_{mes}+\phi_{mic}}\right) \cdot I_r - k_Y \cdot M_{Y_{(mes)}}+ T_Y } \cr
+\eqn{ \frac{dM_{O_{(mes)}}}{dt} = \left( \epsilon \cdot k_Y \cdot M_{Y_{(mes)}} \right) - 
+\left( (1- \epsilon) \cdot k_O \cdot M_{O_{(mes)}} \right) + T_O} \cr
+\eqn{ \frac{dM_{Y_{(mic)}}}{dt} = \left( \frac{\phi_{mic}}{\phi_{mes}+\phi_{mic}}\right) 
+\cdot I_r - k_Y \cdot F_{prot} \cdot M_{Y_{(mes)}}- T_Y } \cr
+\eqn{ \frac{dM_{O_{(mic)}}}{dt} = \left( \epsilon \cdot k_Y \cdot F_{prot} 
+\cdot M_{Y_{(mes)}} \right) - \left( (1- \epsilon) \cdot k_O \cdot F_{prot} \cdot M_{O_{(mes)}} \right) - T_O } \cr
  \cr
 Please refer to the original paper for more details.  \cr
- The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as  \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot \frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2 disappeared and are now calculaged as
+ The terms \eqn{T_Y} and \eqn{T_Y} are calculated in the original paper as 
+ \eqn{k_{mix} \cdot \frac{(My_{mic}-My_{mes})}{2}} and \eqn{k_{mix} \cdot 
+\frac{(Mo_{mic}-Mo_{mes})}{2}}, but in a later model development the term 2
+ disappeared and are now calculaged as
  \eqn{T_Y = k_{mix} \cdot (My_{mic}-My_{mes})} and \eqn{T_O = k_{mix} \cdot (Mo_{mic}-Mo_{mes})}. \cr
  \cr
-The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})} and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
+The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})}
+ and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different
+ C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
 }
 \references{
 Meurer, Katharina Hildegard Elisabeth, Claire Chenu, Elsa Coucheney, Anke Marianne Herrmann, Thomas Keller, Thomas Kätterer, David Nimblad Svensson, and Nicholas Jarvis. “Modelling Dynamic Interactions between Soil Structure and the Storage and Turnover of Soil Organic Matter.” Biogeosciences 17, no. 20 (October 19, 2020): 5025–42. https://doi.org/10.5194/bg-17-5025-2020. \cr

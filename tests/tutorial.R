@@ -2,21 +2,21 @@ library(SoilR)
 
 Iy_value=1.6
 
-TwopoolNonlinearInput<-function(ky=0.8, ko=0.00605, h=0.13, Iy=Iy_value){
+TwopoolNonlinearInput<-function(ky=0.8, ko=0.00605, h=0.13, Iy=Iy_value, proportion){
   time_symbol='t'
 
   ifs=SoilR:::InFluxList_by_PoolName(
     c(
       SoilR:::InFlux_by_PoolName(
         destinationName='Cy',
-        func=function(t, Co, Cy){
-          Iy*(Co/(Co+Cy))
+        func=function(t){
+          Iy*proportion
         }
       ),
       SoilR:::InFlux_by_PoolName(
         destinationName='Co',
-        func=function(t, Co, Cy){
-          Iy*(1-(Co/(Co+Cy)))
+        func=function(t){
+          Iy*(1-proportion)
         }
       )
     )
@@ -59,7 +59,8 @@ TwopoolNonlinearInput<-function(ky=0.8, ko=0.00605, h=0.13, Iy=Iy_value){
   smod
 }
 
-modelObject<-TwopoolNonlinearInput()
+modelObject<-TwopoolNonlinearInput(proportion=0.3)
+plotPoolGraph(modelObject)
 
 iv<-c(Cy=1, Co=10)
 duration=20
@@ -100,7 +101,7 @@ duration=20
 time_step=0.1
 
 times<-seq(0,duration,by=time_step)
-ICBM_run=ICBMModel(t=times, h=0.250, r=1.10, c0=iv, In=Iy_value) #Manure
+ICBM_run=ICBMModel(t=times, h=0.250, r=1.10, c0=iv, In=Iy_value+Io_value) #Manure
 Ct0<-getC(ICBM_run)
 Rt0<-getReleaseFlux(ICBM_run)
 
