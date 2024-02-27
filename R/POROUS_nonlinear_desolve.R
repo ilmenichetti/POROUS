@@ -142,9 +142,9 @@ ODE_Porous <- function(t, state, parameters) {
 
     # Modification suggested by Nick Jarvis, personal communication, 15 January 2024
     .My_mes <- Im + proportion * Ir - ky*kt*ku_mes * My_mes + kmix * My_mic
-    .Mo_mes <- e * ky*kt*ku_mes * My_mes - (1 - e) * ko*kt*ku_mes * Mo_mes + kmix * (Mo_mic - Mo_mes)
+    .Mo_mes <- e * ky*kt*ku_mes * My_mes - (1 - e) * ko*kt*ku_mes * Mo_mes + kmix * Mo_mic
     .My_mic <- (1 - proportion) * Ir - ky*kt*ku_mic * F_prot * My_mic - kmix * My_mic
-    .Mo_mic <- e * ky*kt*ku_mic * F_prot * My_mic - (1 - e) * ko*kt*ku_mic * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
+    .Mo_mic <- e * ky*kt*ku_mic * F_prot * My_mic - (1 - e) * ko*kt*ku_mic * F_prot * Mo_mic - kmix * Mo_mic
 
     return(list(c(.My_mes, .Mo_mes, .My_mic, .Mo_mic)))
   })
@@ -171,9 +171,9 @@ ODE_Porous <- function(t, state, parameters) {
 
     # Modification suggested by Nick Jarvis, personal communication, 15 January 2024
     .My_mes <- Im + proportion * Ir - ky*kt*ku_mes * My_mes + kmix * My_mic
-    .Mo_mes <- e * ky*kt*ku_mes * My_mes - (1 - e) * ko*kt*ku_mes * Mo_mes + kmix * (Mo_mic - Mo_mes)
+    .Mo_mes <- e * ky*kt*ku_mes * My_mes - (1 - e) * ko*kt*ku_mes * Mo_mes + kmix * Mo_mic
     .My_mic <- (1 - proportion) * Ir - ky*kt*ku_mic * F_prot * My_mic - kmix * My_mic
-    .Mo_mic <- e * ky*kt*ku_mic * F_prot * My_mic - (1 - e) * ko*kt*ku_mic * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
+    .Mo_mic <- e * ky*kt*ku_mic * F_prot * My_mic - (1 - e) * ko*kt*ku_mic * F_prot * Mo_mic - kmix * Mo_mic
 
     return(list(c(.My_mes, .Mo_mes, .My_mic, .Mo_mic)))
   })
