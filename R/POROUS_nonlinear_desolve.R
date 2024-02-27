@@ -41,7 +41,16 @@
 #' The two porosity terms, \eqn{\phi_{mes} = f(M_{Y_{(mes)}}, M_{O_{(mes)}},M_{Y_{(mic)}}, M_{O_{(mic)}})}
 #'  and \eqn{\phi_{mic} = f(M_{Y_{(mic)}}, M_{O_{(mic)}})}, are dependent on the variation of the different
 #'  C pools and everything is variable over time, introducing a nonlinearity in the system and defining the biggest peculiarity of this model.  \cr
+#' This particular version (nonlinear) includes a modification of the original
+#' to include second order microbial interactions: \cr
+#' \eqn{
+#' k_{(u, mes)} = max \left(0, (1- \frac{A_a}{ \epsilon k_t \left(  k_y \frac{Y_{(mes)}}{\Delta z}  +  k_o \frac{O_{(mes)}}{\Delta z}  \right) }) \right)
+#' }
+#' and: \cr
 #'
+#' \eqn{
+#' k_{(u, mic)} = max \left(0, (1- \frac{A_a}{ \epsilon k_t F_{prot} \left(  k_y \frac{Y_{(mic)}}{\Delta z}  +  k_o \frac{O_{(mic)}}{\Delta z}  \right) }) \right)
+#' }
 #'
 #' @param ky decomposition constant of the Young pool \eqn{frac{1}{year}}
 #' @param ko decomposition constant of the Old pool \eqn{frac{1}{year}}
@@ -62,7 +71,7 @@
 #' Kätterer, Thomas, and Olof Andrén. “The ICBM Family of Analytically Solved Models of Soil Carbon, Nitrogen and Microbial Biomass Dynamics — Descriptions and Application Examples.” Ecological Modelling 136, no. 2–3 (January 2001): 191–207. https://doi.org/10.1016/S0304-3800(00)00420-8.
 #' @export
 #'
-run_Porous_deSolve<-function (ky,
+run_Porous_nonlinear_deSolve<-function (ky,
                      ko,
                      kmix,
                      e,
@@ -86,9 +95,10 @@ run_Porous_deSolve<-function (ky,
 
   require(deSolve)
 
-if(constant==F){
-Im_fun <- approxfun(Im, rule = 2)
-Ir_fun <- approxfun(Ir, rule = 2)
+  # if inputs are not variable, we need to produce a function to make them continuous
+  if(constant==F){
+  Im_fun <- approxfun(Im, rule = 2)
+  Ir_fun <- approxfun(Ir, rule = 2)
 
 
 ##ODE Porous for variable inputs
@@ -97,8 +107,15 @@ ODE_Porous <- function(t, state, parameters) {
     if (is.null(proportion)) {
       proportion <- pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[1]
     }
-    Im=Im_fun(t)
-    Ir=Ir_fun(t)
+    Im = Im_fun(t)
+    Ir = Ir_fun(t)
+
+    #Temperature scaling
+    if(Ts >= Tmin){kt = (Ts-Tmin)^2/(Tref-Tmin)^2} else {kt = 0}
+
+    #nonlinear microbial scaling (derived by Wutsler and Reichstein 2013)
+    ku_mes=pmax(c(0, (1- A_a/(e*k_t* (ky * (MY_mes/Dz)) + ko * (MO_mes/Dz)))))
+    ku_mic=pmax(c(0, (1- A_a/(e*k_t*F_prot* (ky * (MY_mic/Dz)) + ko * (MO_mic/Dz)))))
 
     # .My_mes <- Im + proportion * Ir - ky * My_mes + kmix * (My_mic - My_mes)
     # .Mo_mes <- e * ky * My_mes - (1 - e) * ko * Mo_mes + kmix * (Mo_mic - Mo_mes)
@@ -106,10 +123,10 @@ ODE_Porous <- function(t, state, parameters) {
     # .Mo_mic <- e * ky * F_prot * My_mic - (1 - e) * ko * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
 
     # Modification suggested by Nick Jarvis, personal communication, 15 January 2024
-    .My_mes <- Im + proportion * Ir - ky * My_mes + kmix * My_mic
-    .Mo_mes <- e * ky * My_mes - (1 - e) * ko * Mo_mes + kmix * (Mo_mic - Mo_mes)
-    .My_mic <- (1 - proportion) * Ir - ky * F_prot * My_mic - kmix * My_mic
-    .Mo_mic <- e * ky * F_prot * My_mic - (1 - e) * ko * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
+    .My_mes <- Im + proportion * Ir - ky*kt*ku_mes * My_mes + kmix * My_mic
+    .Mo_mes <- e * ky*kt*ku_mes * My_mes - (1 - e) * ko*kt*ku_mes * Mo_mes + kmix * (Mo_mic - Mo_mes)
+    .My_mic <- (1 - proportion) * Ir - ky*kt*ku_mic * F_prot * My_mic - kmix * My_mic
+    .Mo_mic <- e * ky*kt*ku_mic * F_prot * My_mic - (1 - e) * ko*kt*ku_mic * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
 
     return(list(c(.My_mes, .Mo_mes, .My_mic, .Mo_mic)))
   })
@@ -122,16 +139,23 @@ ODE_Porous <- function(t, state, parameters) {
       proportion <- pore_frac(phi_mac, clay, Delta_z_min, gamma_o, My_mes, Mo_mes, My_mic, Mo_mic, phi_min, f_text_mic, f_agg)[1]
     }
 
+    #Temperature scaling
+    if(Ts >= Tmin){kt = (Ts-Tmin)^2/(Tref-Tmin)^2} else {kt = 0}
+
+    #nonlinear microbial scaling (derived by Wutsler and Reichstein 2013)
+    ku_mes=pmax(c(0, (1- A_a/(e*k_t* (ky * (MY_mes/Dz)) + ko * (MO_mes/Dz)))))
+    ku_mic=pmax(c(0, (1- A_a/(e*k_t*F_prot* (ky * (MY_mic/Dz)) + ko * (MO_mic/Dz)))))
+
     # .My_mes <- Im + proportion * Ir - ky * My_mes + kmix * (My_mic - My_mes)
     # .Mo_mes <- e * ky * My_mes - (1 - e) * ko * Mo_mes + kmix * (Mo_mic - Mo_mes)
     # .My_mic <- (1 - proportion) * Ir - ky * F_prot * My_mic - kmix * (My_mic - My_mes)
     # .Mo_mic <- e * ky * F_prot * My_mic - (1 - e) * ko * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
 
     # Modification suggested by Nick Jarvis, personal communication, 15 January 2024
-    .My_mes <- Im + proportion * Ir - ky * My_mes + kmix * My_mic
-    .Mo_mes <- e * ky * My_mes - (1 - e) * ko * Mo_mes + kmix * (Mo_mic - Mo_mes)
-    .My_mic <- (1 - proportion) * Ir - ky * F_prot * My_mic - kmix * My_mic
-    .Mo_mic <- e * ky * F_prot * My_mic - (1 - e) * ko * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
+    .My_mes <- Im + proportion * Ir - ky*kt*ku_mes * My_mes + kmix * My_mic
+    .Mo_mes <- e * ky*kt*ku_mes * My_mes - (1 - e) * ko*kt*ku_mes * Mo_mes + kmix * (Mo_mic - Mo_mes)
+    .My_mic <- (1 - proportion) * Ir - ky*kt*ku_mic * F_prot * My_mic - kmix * My_mic
+    .Mo_mic <- e * ky*kt*ku_mic * F_prot * My_mic - (1 - e) * ko*kt*ku_mic * F_prot * Mo_mic - kmix * (Mo_mic - Mo_mes)
 
     return(list(c(.My_mes, .Mo_mes, .My_mic, .Mo_mic)))
   })
