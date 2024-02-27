@@ -50,7 +50,17 @@
 #'
 #' \eqn{
 #' k_{(u, mic)} = max \left(0, (1- \frac{A_a}{ \epsilon k_t F_{prot} \left(  k_y \frac{Y_{(mic)}}{\Delta z}  +  k_o \frac{O_{(mic)}}{\Delta z}  \right) }) \right)
-#' }
+#' } \cr
+#'
+#'This version implements also a temperature reduction function: \cr
+#' \deqn{k_t =
+#' \begin{cases}
+#' \frac{(T_s - T_{\min})^2}{(T_{\text{ref}} - T_{\min})^2} & \text{if } T_s \geq T_{\min} \\
+#' 0 & \text{if } T_s < T_{\min}
+#' \end{cases}
+#' }{kt = [(Ts - Tmin)^2 / (Tref - Tmin)^2] if Ts >= Tmin; 0 if Ts < Tmin} \cr
+#' where \deqn{Ts} is the soil temperature, \deqn{Tref} is a reference temperature and \deqn{Tmin} is the temperature at which the mineralization of soil organic matter ceases.
+#' The terms \deqn{k_{u, i}} and \deqn{k_t} are linear multipliers of all kinetic terms \cr
 #'
 #' @param ky decomposition constant of the Young pool \eqn{frac{1}{year}}
 #' @param ko decomposition constant of the Old pool \eqn{frac{1}{year}}
@@ -58,6 +68,11 @@
 #' @param e efficiency, which is the transfer term between the pools and corresponds to the term h in the ICBM model in Kätterer et al. (2001) (dimensionless)
 #' @param Im Inputs from aboveground.  Units are generally in (\eqn{g cm^{-2} year^{-1}), but in any case they should match the units of the initialization.
 #' @param Ir Inputs from roots, which is partitioned between micropore and mesopores with the function \code{\link{pore_frac}}. Units are generally in (\eqn{g cm^{-2} year^{-1}), but in any case they should match the units of the initialization.
+#' @param F_prot protection provided by the micropore space (dimensionless)
+#' @param Tref reference temperature for the temperature scaling function \eqn{^{\circ}C}
+#' @param Tmin temperature at which mineralization ceases for the temperature scaling function \eqn{^{\circ}C}
+#' @param Ts soil temperature for the temperature scaling function \eqn{^{\circ}C}
+#' @param F_prot protection provided by the micropore space (dimensionless)
 #' @param F_prot protection provided by the micropore space (dimensionless)
 #' @param proportion this is a linearization term to make the proportion of the inputs between micro- and mesopores constant. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)
 #' @param constant boolean, if TRUE then the solver run in constant input mode, otherwise in variable input mode. Default is FALSE.
@@ -87,6 +102,9 @@ run_Porous_nonlinear_deSolve<-function (ky,
                      proportion = NULL,
                      f_text_mic = NULL,
                      f_agg,
+                     Tref,
+                     Tmin,
+                     Ts,
                      init,
                      sim_length,
                      sim_steps,
