@@ -72,6 +72,7 @@
 #' @param Tref reference temperature for the temperature scaling function \eqn{^{\circ}C}
 #' @param Tmin temperature at which mineralization ceases for the temperature scaling function \eqn{^{\circ}C}
 #' @param Ts soil temperature for the temperature scaling function \eqn{^{\circ}C}
+#' @param A_a  compoite microbial parameter (g cm\eqn{^{-3}} y\eqn{^{-1}})
 #' @param F_prot protection provided by the micropore space (dimensionless)
 #' @param F_prot protection provided by the micropore space (dimensionless)
 #' @param proportion this is a linearization term to make the proportion of the inputs between micro- and mesopores constant. If NULL (or not specified, since default is NULL) then the model is running as nonlinear, as in the original paper. If specified (must be between 0 and 1) then the model is linearized adopting this value as fixed proportion of inputs from roots going into the mesopore space (and its reciprocal into the micropore)
@@ -105,6 +106,7 @@ run_Porous_nonlinear_deSolve<-function (ky,
                      Tref,
                      Tmin,
                      Ts,
+                     A_a=0.0002,
                      init,
                      sim_length,
                      sim_steps,
@@ -197,7 +199,11 @@ ODE_Porous <- function(t, state, parameters) {
                phi_min,
                f_text_mic,
                f_agg,
-               proportion)
+               proportion,
+               Tref,
+               Tmin,
+               Ts,
+               A_a)
 
   times<-seq(0,sim_length,by=sim_steps)
 

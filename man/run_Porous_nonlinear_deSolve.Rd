@@ -25,6 +25,7 @@ run_Porous_nonlinear_deSolve(
   Tref,
   Tmin,
   Ts,
+  A_a = 2e-04,
   init,
   sim_length,
   sim_steps,
@@ -59,6 +60,8 @@ run_Porous_nonlinear_deSolve(
 \item{Tmin}{temperature at which mineralization ceases for the temperature scaling function \eqn{^{\circ}C}}
 
 \item{Ts}{soil temperature for the temperature scaling function \eqn{^{\circ}C}}
+
+\item{A_a}{compoite microbial parameter (g cm\eqn{^{-3}} y\eqn{^{-1}})}
 
 \item{constant}{boolean, if TRUE then the solver run in constant input mode, otherwise in variable input mode. Default is FALSE.}
 }
